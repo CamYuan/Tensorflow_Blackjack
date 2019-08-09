@@ -42,10 +42,11 @@ If the cutCard is dealt, this will be the last hand. Set isShuffleTime to true
 '''
 def hit(hand):
     card = cardShoe.pop()
-    if(card.rank == "cutCard"):
+    if(card.rank == 0):
+        global isShuffleTime
         isShuffleTime = True
         card = cardShoe.pop()
-        print("----CUT CARD---")
+        print("----CUT CARD----")
     hand.append(card)
 
 '''
@@ -102,38 +103,83 @@ then we also discard the rest of the shoe and generate a new shoe
 def clearTable(table):
     for hand in table:
         hand.clear()
-    for i in range(len(tableScores)):
+    for i in range(tableCount):
          tableScores[i] = "Null"
 
+'''
+@param void
+@return void
+
+Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
+used for continuous gaming or set a game count.
+'''
 def newDeck():
     cardShoe.clear()
     isShuffleTime = False
-    printShoe() #for Debugging. Remove if working correctly
     loadShoe()
 
+'''
+@param list object of players
+@param dealer hand
+@return void
+
+First confirm the dealer's score and whether or not they busted.
+If the player busted first, they lose.
+If the dealer busted, all remaining players should win
+If the players hand is higher than the dealers, they should win
+If the players hand is the same as the dealers, they PUSH
+If the players hand is less than the dealers, they lose
+
+Players' hands and dealer's should not be higher than 21
+as it should have been caught by BUST logic
+
+Also give an easier readout for the print object
+'''
 def scoreTable(players, dealer):
     dealerHand = getSoftScore(dealer)
-    print("Dealerscore: ", dealerHand)
+    print()
+    if tableScores[tableCount-1] != "BUST":
+        tableScores[tableCount-1] = dealerHand
+    print("DEALER : ", tableScores[tableCount-1])
     playerIndex = 0
     for player in players:
         playerScore = getSoftScore(player)
-        print("PlayerScore: ", playerScore)
         if tableScores[playerIndex] != "BUST":
-            if  tableScores[len(tableScores)-1] == "BUST":
-                tableScores[playerIndex] = "playerWin"
+            if  tableScores[tableCount-1] == "BUST":
+                tableScores[playerIndex] = "WIN"
             elif playerScore > dealerHand:
-                tableScores[playerIndex] = "playerWin"
+                tableScores[playerIndex] = "WIN"
             elif playerScore == dealerHand:
                 tableScores[playerIndex] = "PUSH"
             else:
-                tableScores[playerIndex] = 'Dealer Wins'
+                tableScores[playerIndex] = 'LOSS'
+    printWinLoss()
                 
-            
+
+'''
+This doesn't really need to be seperated out, but might be useful when feeding
+to the Nueral Net
+'''
+def printWinLoss():
+    for i in range(tableCount-1):
+        print("Player", i+1, ":", tableScores[i], getSoftScore(table[i]))
 
 
 
+'''
+Runs through the hand.
 
-''''''
+Each player makes a series of decisions. For now it is only [Hit] and [S]tand
+Hitting gives the player a new card and they can then make the same decision
+When they choose to stand, they will not get any more cards
+If they BUST, they lose immediately
+After the players make their choices, the dealer then hits based on
+predetermined rules. In this case, they will stay on a Soft 17 or higher
+
+After the dealer makes all their choices, score the table to determine winners
+Discard all the cards and get ready for the next hand
+
+'''
 def playHand():
     deal(table)
     print("Dealer's up Card: " , dealer[0])
@@ -142,7 +188,7 @@ def playHand():
         print(getSoftScore(player), getHardScore(player), player)
         choice = ''
         while choice != 's':
-            choice = input("[H]it, [S]tand, or [M]yHand: ").lower()
+            choice = input("[H]it or [S]tand ").lower()
             if choice == 'h':
                 hit(player)
                 print(getSoftScore(player), getHardScore(player), player)
@@ -151,14 +197,12 @@ def playHand():
                     choice = 's'
             print(player)
         playerIndex += 1
-
-        #TODO: Check BUST Logic. 
             
     while getSoftScore(dealer) < 17: #dealer stays on soft 17
         hit(dealer)
         print("DealerHand", dealer)
         if getHardScore(dealer) > 21:
-            tableScores[len(tableScores)-1] = "BUST"
+            tableScores[tableCount-1] = "BUST"
             
     scoreTable(players, dealer)
     clearTable(table)
@@ -166,7 +210,10 @@ def playHand():
     
             
 
-###########################
+'''
+Player Objects. This table can hold a max of 5 players.
+We could code this more dynamically, but it just seemed like overkill...
+'''
 player1 = []
 player2 = []
 player3 = []
@@ -175,19 +222,43 @@ player5 = []
 dealer = []
 ###########################
 
+'''
+table list and players list are sort of duplicates because it makes looping a
+bit easier, but I should consider consolidating...
+
+Generating tableScores list based on the number of players
+'''
 table = [player1, dealer]
 players = [player1]
 
 tableScores = []
 for each in range(len(table)):
     tableScores.append("Null")
+tableCount = len(tableScores)
 
 loadShoe()
 
-while isShuffleTime == False:
+'''
+Run the game. Put this in a for loop if you want to run the game
+X times in a row
+'''
+while not isShuffleTime:
     playHand()
+    print(isShuffleTime)
 newDeck()
 print("Good Games!")
 
-
+'''
+TODO: Generate Test data for basic Feed Forward Neural Net
+TODO: Train Neural Net on test data
+TODO: Train Neural Net based on Win/Loss to see if it comes up with the same basic strategy
+TODO: Add logic for double downs and splits
+TODO: Re-do Neural Net with new information
+TODO: Implement Hi-Lo Card Count and other card counting systems
+TODO: Test Nueral net efficiency with new information
+TODO: Implement RNN with all information.
+TODO: Test different training strategies and see what is best
+TODO: Build Neural Net for betting strategies
+TODO: Throw it all together in a DQRNN maybe
+'''
 
