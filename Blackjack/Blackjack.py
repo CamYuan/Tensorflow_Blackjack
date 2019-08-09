@@ -31,8 +31,7 @@ def loadShoe():
 
 '''Easier readability of the cardShoe'''
 def printShoe():
-    for card in cardShoe:
-        print(card)
+    for card in cardShoe: print(card)
 
 '''
 @param list object of a single player's hand
@@ -46,6 +45,7 @@ def hit(hand):
     if(card.rank == "cutCard"):
         isShuffleTime = True
         card = cardShoe.pop()
+        print("----CUT CARD---")
     hand.append(card)
 
 '''
@@ -71,7 +71,8 @@ i.e.: hand(A,5,A) has a "hard value" of 7
 def getHardScore(playerHand):
     hardScore = 0
     for card in playerHand:
-        hardScore += card.rank
+        if card.rank > 10: hardScore += 10
+        else: hardScore += card.rank
     return hardScore
         
 '''
@@ -84,12 +85,12 @@ Soft hands should always contain an Ace
 i.e.: hand(A,5,A) has a "soft value" of 17
 '''
 def getSoftScore(playerHand):
-    #TODO: Add logic to check for ace and calculate softscore
     softScore = getHardScore(playerHand)
-    if softScore > 10:
-        return softScore
-    else:
-        return softScore + 10
+    for card in playerHand:
+        if card.rank == 1:
+            if softScore > 10: return softScore
+            else: return softScore + 10
+    return softScore
 
 '''
 @param list object of all person's hands
@@ -101,55 +102,68 @@ then we also discard the rest of the shoe and generate a new shoe
 def clearTable(table):
     for hand in table:
         hand.clear()
+    for i in range(len(tableScores)):
+         tableScores[i] = "Null"
 
 def newDeck():
     cardShoe.clear()
     isShuffleTime = False
     printShoe() #for Debugging. Remove if working correctly
     loadShoe()
-        
-def determineBust(player):
-    if getHardScore(player) > 21:
-        print('BUST!', player)
-    return True
 
 def scoreTable(players, dealer):
     dealerHand = getSoftScore(dealer)
+    print("Dealerscore: ", dealerHand)
+    playerIndex = 0
     for player in players:
         playerScore = getSoftScore(player)
-        if  playerScore > dealerHand:
-            print('Player wins!')
-        elif playerScore == dealerHand:
-            print('PUSH')
-        else:
-            print('Dealer Wins')
+        print("PlayerScore: ", playerScore)
+        if tableScores[playerIndex] != "BUST":
+            if  tableScores[len(tableScores)-1] == "BUST":
+                tableScores[playerIndex] = "playerWin"
+            elif playerScore > dealerHand:
+                tableScores[playerIndex] = "playerWin"
+            elif playerScore == dealerHand:
+                tableScores[playerIndex] = "PUSH"
+            else:
+                tableScores[playerIndex] = 'Dealer Wins'
                 
             
 
 
+
+
 ''''''
-def blackjackSession():
-    choice = 0
-    while isShuffleTime == False:
-        deal(table)
-        print("Dealer's up Card: " , dealer[0])
-        for player in players:
-            print("Next Player", player, getSoftScore(player), getHardScore(player))
-            while choice != 's':
-                choice = input("[H]it, [S]tand, or [Q]uit: ").lower()
-                if choice == 'h':
-                    hit(player)
-                    if determineBust(player):
-                        choice = 's'
-                print(player)
-        while getSoftScore(dealer) < 17: #dealer stays on soft 17
-            hit(dealer)
-            determineBust(dealer)
-        #handle scoring and print winning and losing and hands and stuffs
-        scoreTable(players, dealer)    
-        clearTable(table)
-    newDeck()
-    print("Good Games!")
+def playHand():
+    deal(table)
+    print("Dealer's up Card: " , dealer[0])
+    playerIndex = 0
+    for player in players:
+        print(getSoftScore(player), getHardScore(player), player)
+        choice = ''
+        while choice != 's':
+            choice = input("[H]it, [S]tand, or [M]yHand: ").lower()
+            if choice == 'h':
+                hit(player)
+                print(getSoftScore(player), getHardScore(player), player)
+                if getHardScore(player) > 21:
+                    tableScores[playerIndex] = "BUST"
+                    choice = 's'
+            print(player)
+        playerIndex += 1
+
+        #TODO: Check BUST Logic. 
+            
+    while getSoftScore(dealer) < 17: #dealer stays on soft 17
+        hit(dealer)
+        print("DealerHand", dealer)
+        if getHardScore(dealer) > 21:
+            tableScores[len(tableScores)-1] = "BUST"
+            
+    scoreTable(players, dealer)
+    clearTable(table)
+    print("--------------------------------")
+    
             
 
 ###########################
@@ -160,10 +174,20 @@ player4 = []
 player5 = []
 dealer = []
 ###########################
+
 table = [player1, dealer]
 players = [player1]
+
+tableScores = []
+for each in range(len(table)):
+    tableScores.append("Null")
+
 loadShoe()
 
+while isShuffleTime == False:
+    playHand()
+newDeck()
+print("Good Games!")
 
 
 
