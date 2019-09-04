@@ -2,15 +2,6 @@ from CardClass import Card
 import random
 import math
 
-#static lists
-cardSuits = ["Hearts","Diamonds","Clubs","Spades"]
-cardValues = ["Ace","Two","Three","Four","Five","Six",
-              "Seven","Eight","Nine","Ten","Jack","Queen","King"]
-
-#Global objects
-cardShoe = []
-isShuffleTime = False
-num_decks = 1 #cardShoes generally have between 6-8 decks
 
 '''
 generate 52 cards per deck in the game (normally 6-8 decks in a shoe)
@@ -89,7 +80,7 @@ def getSoftScore(playerHand):
     softScore = getHardScore(playerHand)
     for card in playerHand:
         if card.rank == 1:
-            if softScore > 10: return softScore
+            if softScore > 11: return softScore
             else: return softScore + 10
     return softScore
 
@@ -115,6 +106,7 @@ used for continuous gaming or set a game count.
 '''
 def newDeck():
     cardShoe.clear()
+    global isShuffleTime
     isShuffleTime = False
     loadShoe()
 
@@ -136,16 +128,21 @@ as it should have been caught by BUST logic
 Also give an easier readout for the print object
 '''
 def scoreTable(players, dealer):
+    global tableScores
     dealerHand = getSoftScore(dealer)
+    
+
     print()
-    if tableScores[tableCount-1] != "BUST":
-        tableScores[tableCount-1] = dealerHand
+    if tableScores[dealerIndex] != "BUST":
+        tableScores[dealerIndex] = dealerHand
     print("DEALER : ", tableScores[tableCount-1])
     playerIndex = 0
     for player in players:
         playerScore = getSoftScore(player)
         if tableScores[playerIndex] != "BUST":
-            if  tableScores[tableCount-1] == "BUST":
+            if tableScores[playerIndex] == "BlackJack!":
+                pass
+            elif  tableScores[dealerIndex] == "BUST":
                 tableScores[playerIndex] = "WIN"
             elif playerScore > dealerHand:
                 tableScores[playerIndex] = "WIN"
@@ -154,6 +151,44 @@ def scoreTable(players, dealer):
             else:
                 tableScores[playerIndex] = 'LOSS'
     printWinLoss()
+
+
+
+'''
+@param list object of players
+@param dealer hand
+@return void
+
+Check if the dealer has blackjack. If true, all players lose immediately
+UNLESS a player also has blackjack, then they PUSH.
+
+If a player has blackjack and the dealer does not, they win with Blackjack
+'''
+def checkBlackjacks(players,dealer):
+    global tableScores
+    dealerScore = getSoftScore(dealer)
+    if dealerScore == 21:
+        tableScores[dealerIndex] = "BlackJack!"
+    playerIndex = 0
+    for player in players:
+        playerScore = getSoftScore(player)
+        if playerScore == 21:
+            tableScores[playerIndex] = "BlackJack!"
+            print("BlackJack!")
+        playerIndex += 1
+    #Blackjack Win/Loss
+    if tableScores[dealerIndex] == "BlackJack!":
+        playerIndex = 0
+        for player in players:
+            if tableScores[playerIndex] == "BlackJack!":
+                tableScores[playerIndex] = "PUSH"
+            else:
+                tableScores[playerIndex] = "LOSE"
+    
+                
+                
+        
+    
                 
 
 '''
@@ -162,12 +197,24 @@ to the Nueral Net
 '''
 def printWinLoss():
     for i in range(tableCount-1):
-        print("Player", i+1, ":", tableScores[i], getSoftScore(table[i]))
+        print(tableScores[i], "Player", i+1, ":", getSoftScore(table[i]))
 
 
 
 '''
-Runs through the hand.
+Runs through the hand:
+1) TODO: Bet
+2) Deal the hand
+3) Check for blackjacks -> Not offering insurance
+4) Let each player make hit/stand/split/doubledown decisions
+5) Play out the dealer hand
+6) Calculate scores
+7) TODO: Payout
+8) Clear the hands/table
+
+If the dealer gets a blackjack, the whole table loses automatically UNLESS
+the player also has blackjack, then they PUSH
+If a player has blackjack, they win immediately 1.5x the amount they bet
 
 Each player makes a series of decisions. For now it is only [Hit] and [S]tand
 Hitting gives the player a new card and they can then make the same decision
@@ -181,31 +228,34 @@ Discard all the cards and get ready for the next hand
 
 '''
 def playHand():
-    deal(table)
-    print("Dealer's up Card: " , dealer[0])
-    playerIndex = 0
-    for player in players:
-        print(getSoftScore(player), getHardScore(player), player)
-        choice = ''
-        while choice != 's':
-            choice = input("[H]it or [S]tand ").lower()
-            if choice == 'h':
-                hit(player)
-                print(getSoftScore(player), getHardScore(player), player)
-                if getHardScore(player) > 21:
-                    tableScores[playerIndex] = "BUST"
-                    choice = 's'
-            print(player)
-        playerIndex += 1
-            
-    while getSoftScore(dealer) < 17: #dealer stays on soft 17
-        hit(dealer)
-        print("DealerHand", dealer)
-        if getHardScore(dealer) > 21:
-            tableScores[tableCount-1] = "BUST"
-            
-    scoreTable(players, dealer)
-    clearTable(table)
+    #1
+    deal(table) #2
+    checkBlackjacks(players,dealer) #3
+    if tableScores[tableCount-1] != "BlackJack!": #4
+        print("Dealer's up Card: " , dealer[0])
+        playerIndex = 0
+        for player in players:
+            print(getSoftScore(player), getHardScore(player), player)
+            choice = ''
+            while choice != 's':
+                choice = input("[H]it or [S]tand ").lower()
+                if choice == 'h':
+                    hit(player)
+                    print(getSoftScore(player), getHardScore(player), player)
+                    if getHardScore(player) > 21:
+                        tableScores[playerIndex] = "BUST"
+                        choice = 's'
+                print(player)
+            playerIndex += 1
+        #dealer stays on soft 17
+        while getSoftScore(dealer) < 17: #5
+            hit(dealer)
+            print("DealerHand", dealer)
+            if getHardScore(dealer) > 21:
+                tableScores[tableCount-1] = "BUST"
+        scoreTable(players, dealer) #6
+    #7
+    clearTable(table) #8
     print("--------------------------------")
     
             
@@ -220,8 +270,14 @@ player3 = []
 player4 = []
 player5 = []
 dealer = []
-###########################
 
+#static lists
+cardSuits = ["Hearts","Diamonds","Clubs","Spades"]
+cardValues = ["Ace","Two","Three","Four","Five","Six",
+              "Seven","Eight","Nine","Ten","Jack","Queen","King"]
+
+
+#Global objects
 '''
 table list and players list are sort of duplicates because it makes looping a
 bit easier, but I should consider consolidating...
@@ -234,22 +290,30 @@ players = [player1]
 tableScores = []
 for each in range(len(table)):
     tableScores.append("Null")
+    
 tableCount = len(tableScores)
+dealerIndex = tableCount - 1
+cardShoe = []
+isShuffleTime = False
+num_decks = 1 #cardShoes generally have between 6-8 decks
 
-loadShoe()
 
 '''
 Run the game. Put this in a for loop if you want to run the game
 X times in a row
 '''
-while not isShuffleTime:
-    playHand()
-    print(isShuffleTime)
-newDeck()
+def game():
+    newDeck()
+    while not isShuffleTime:
+        playHand()
+        #print(isShuffleTime)
+game()
 print("Good Games!")
 
 '''
 TODO: Generate Test data for basic Feed Forward Neural Net
+    -Feed forward networks have no 'memory' so each hand state
+    will act like an independent hand
 TODO: Train Neural Net on test data
 TODO: Train Neural Net based on Win/Loss to see if it comes up with the same basic strategy
 TODO: Add logic for double downs and splits
