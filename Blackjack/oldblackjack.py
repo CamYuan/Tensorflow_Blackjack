@@ -4,23 +4,44 @@ import math
 
 
 '''
-@param list object of a single player
+generate 52 cards per deck in the game (normally 6-8 decks in a shoe)
+randomly shuffle the cards and insert the cut card
+When the cutCard is hit, it will be time to shuffle a new deck
+'''
+def loadShoe():
+    cutCard = Card(0,"cutCard","None")
+    for deck in range(0,num_decks):
+        for suit in cardSuits:
+            for rank in range(1,14):
+                cardShoe.append(Card(rank, cardValues[rank-1], suit))
+    random.shuffle(cardShoe) #shuffle the cardShoe
+    #index between 70-90% of the BACK of the deck to insert the cutCard
+    minIndex = math.floor((52*num_decks)*.1)
+    maxIndex = math.floor((52*num_decks)*.3)
+    cardShoe.insert(random.randint(minIndex,maxIndex), cutCard)
+
+'''Easier readability of the cardShoe'''
+def printShoe():
+    for card in cardShoe: print(card)
+
+'''
+@param list object of a single player's hand
 @return void
 
 Pops 1 card off the cardShoe and adds it to the player's hand
 If the cutCard is dealt, this will be the last hand. Set isShuffleTime to true
 '''
-def hit(player):
+def hit(hand):
     card = cardShoe.pop()
     if(card.rank == 0):
         global isShuffleTime
         isShuffleTime = True
         card = cardShoe.pop()
         print("----CUT CARD----")
-    player.hitHand(card)
+    hand.append(card)
 
 '''
-@param list of all players
+@param list object of a all person's hands 
 @return void
 
 Gives 2 cards to all players.
@@ -32,9 +53,36 @@ def deal(table):
             hit(player)
     
 
+'''
+@param list object of a single player's hand
+@return int score of player's hard hand value
 
+Also could be considered lowest possible hand
+i.e.: hand(A,5,A) has a "hard value" of 7
+'''
+def getHardScore(playerHand):
+    hardScore = 0
+    for card in playerHand:
+        if card.rank > 10: hardScore += 10
+        else: hardScore += card.rank
+    return hardScore
         
+'''
+@param list object of a single player's hand
+@return int score of player's soft hand value
 
+Also could be considered highest possible hand
+Soft value will return the hard value if over 10
+Soft hands should always contain an Ace
+i.e.: hand(A,5,A) has a "soft value" of 17
+'''
+def getSoftScore(playerHand):
+    softScore = getHardScore(playerHand)
+    for card in playerHand:
+        if card.rank == 1:
+            if softScore > 11: return softScore
+            else: return softScore + 10
+    return softScore
 
 '''
 @param list object of all person's hands
@@ -116,7 +164,7 @@ UNLESS a player also has blackjack, then they PUSH.
 
 If a player has blackjack and the dealer does not, they win with Blackjack
 '''
-def checkBlackjacks(players,dealer, tableScores):
+def checkBlackjacks(players,dealer):
     global tableScores
     dealerScore = getSoftScore(dealer)
     if dealerScore == 21:
@@ -142,6 +190,14 @@ def checkBlackjacks(players,dealer, tableScores):
         
     
                 
+
+'''
+This doesn't really need to be seperated out, but might be useful when feeding
+to the Nueral Net
+'''
+def printWinLoss():
+    for i in range(tableCount-1):
+        print(tableScores[i], "Player", i+1, ":", getSoftScore(table[i]))
 
 
 
@@ -204,7 +260,42 @@ def playHand():
     
             
 
+'''
+Player Objects. This table can hold a max of 5 players.
+We could code this more dynamically, but it just seemed like overkill...
+'''
+player1 = []
+player2 = []
+player3 = []
+player4 = []
+player5 = []
+dealer = []
 
+#static lists
+cardSuits = ["Hearts","Diamonds","Clubs","Spades"]
+cardValues = ["Ace","Two","Three","Four","Five","Six",
+              "Seven","Eight","Nine","Ten","Jack","Queen","King"]
+
+
+#Global objects
+'''
+table list and players list are sort of duplicates because it makes looping a
+bit easier, but I should consider consolidating...
+
+Generating tableScores list based on the number of players
+'''
+table = [player1, dealer]
+players = [player1]
+
+tableScores = []
+for each in range(len(table)):
+    tableScores.append("Null")
+    
+tableCount = len(tableScores)
+dealerIndex = tableCount - 1
+cardShoe = []
+isShuffleTime = False
+num_decks = 1 #cardShoes generally have between 6-8 decks
 
 
 '''
