@@ -34,4 +34,4 @@ class Card:
         if error: exit()
             
 
-
+#add card counting values from https://www.blackjackapprenticeship.com/card-counting-systems/

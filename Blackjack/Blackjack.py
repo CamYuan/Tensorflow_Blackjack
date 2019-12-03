@@ -1,23 +1,24 @@
 from CardClass import Card
-import random
-import math
+from HelperFunctions import *
+
+from GameState import *
 
 
 '''
 @param list object of a single player
 @return void
 
-Pops 1 card off the cardShoe and adds it to the player's hand
+Pops 1 card off the cardShoe and adds it to a hand
 If the cutCard is dealt, this will be the last hand. Set isShuffleTime to true
 '''
-def hit(player):
+def hit(hand):
     card = cardShoe.pop()
     if(card.rank == 0):
         global isShuffleTime
         isShuffleTime = True
         card = cardShoe.pop()
         print("----CUT CARD----")
-    player.hitHand(card)
+    hand.addCard(card)
 
 '''
 @param list of all players
@@ -28,39 +29,8 @@ Dealer should be the last index of the players
 '''
 def deal(table):
     for i in range(0,2):
-        for player in table:
-            hit(player)
-    
-
-
-        
-
-
-'''
-@param list object of all person's hands
-@return void
-
-Discard's all player's hands and the dealer's hand. If we hit the cutCard
-then we also discard the rest of the shoe and generate a new shoe
-'''
-def clearTable(table):
-    for hand in table:
-        hand.clear()
-    for i in range(tableCount):
-         tableScores[i] = "Null"
-
-'''
-@param void
-@return void
-
-Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
-used for continuous gaming or set a game count.
-'''
-def newDeck():
-    cardShoe.clear()
-    global isShuffleTime
-    isShuffleTime = False
-    loadShoe()
+        for hand in table:
+            hit(hand)
 
 '''
 @param list object of players
@@ -78,71 +48,43 @@ Players' hands and dealer's should not be higher than 21
 as it should have been caught by BUST logic
 
 Also give an easier readout for the print object
+
+
+
 '''
 def scoreTable(players, dealer):
-    global tableScores
-    dealerHand = getSoftScore(dealer)
-    
-
+    dealerScore = dealer.hands[0].getSoftScore()
     print()
-    if tableScores[dealerIndex] != "BUST":
-        tableScores[dealerIndex] = dealerHand
-    print("DEALER : ", tableScores[tableCount-1])
-    playerIndex = 0
-    for player in players:
-        playerScore = getSoftScore(player)
-        if tableScores[playerIndex] != "BUST":
-            if tableScores[playerIndex] == "BlackJack!":
-                pass
-            elif  tableScores[dealerIndex] == "BUST":
-                tableScores[playerIndex] = "WIN"
-            elif playerScore > dealerHand:
-                tableScores[playerIndex] = "WIN"
-            elif playerScore == dealerHand:
-                tableScores[playerIndex] = "PUSH"
-            else:
-                tableScores[playerIndex] = 'LOSS'
-    printWinLoss()
-
-
-
-'''
-@param list object of players
-@param dealer hand
-@return void
-
-Check if the dealer has blackjack. If true, all players lose immediately
-UNLESS a player also has blackjack, then they PUSH.
-
-If a player has blackjack and the dealer does not, they win with Blackjack
-'''
-def checkBlackjacks(players,dealer, tableScores):
-    global tableScores
-    dealerScore = getSoftScore(dealer)
-    if dealerScore == 21:
-        tableScores[dealerIndex] = "BlackJack!"
-    playerIndex = 0
-    for player in players:
-        playerScore = getSoftScore(player)
-        if playerScore == 21:
-            tableScores[playerIndex] = "BlackJack!"
-            print("BlackJack!")
-        playerIndex += 1
-    #Blackjack Win/Loss
-    if tableScores[dealerIndex] == "BlackJack!":
-        playerIndex = 0
+    print("DEALER : ", dealerScore)
+    '''
+    Check if the dealer has blackjack. If true, all players lose immediately
+    UNLESS a player also has blackjack, then they PUSH.
+    '''
+    if dealerScore == "BlackJack!":
         for player in players:
-            if tableScores[playerIndex] == "BlackJack!":
-                tableScores[playerIndex] = "PUSH"
-            else:
-                tableScores[playerIndex] = "LOSE"
-    
-                
-                
-        
-    
-                
-
+            for hand in player.hands:
+                if handScore == "BlackJack!":
+                    hand = "PUSH"
+                else:
+                    hand = "LOSS"
+                print(hand)
+    else:
+        for player in players:
+            for hand in player.hands:
+                print(hand.getSoftScore())
+                if handScore != "BUST":
+                    if handScore == "BlackJack!":
+                        hand = "MEGAWIN"#implement 1.5x
+                    elif dealerScore == "BUST":
+                        hand = "WIN"
+                    elif playerScore > dealerScore:
+                        hand = "WIN"
+                    elif playerScore == dealerScore:
+                        hand = "PUSH"
+                    else:
+                        hand = "LOSS"
+                print(hand)
+    printWinLoss()
 
 
 '''
@@ -174,50 +116,44 @@ Discard all the cards and get ready for the next hand
 def playHand():
     #1
     deal(table) #2
-    checkBlackjacks(players,dealer) #3
-    if tableScores[tableCount-1] != "BlackJack!": #4
-        print("Dealer's up Card: " , dealer[0])
+    if dealer.hands[0].getSoftScore() != "BlackJack!": #3
+        print("Dealer's up Card: " , dealer.hands[0])
         playerIndex = 0
-        for player in players:
-            print(getSoftScore(player), getHardScore(player), player)
-            choice = ''
-            while choice != 's':
-                choice = input("[H]it or [S]tand ").lower()
-                if choice == 'h':
-                    hit(player)
-                    print(getSoftScore(player), getHardScore(player), player)
-                    if getHardScore(player) > 21:
-                        tableScores[playerIndex] = "BUST"
-                        choice = 's'
-                print(player)
-            playerIndex += 1
-        #dealer stays on soft 17
-        while getSoftScore(dealer) < 17: #5
-            hit(dealer)
+        for player in players: #4
+            for hand in player.hands:
+                print(player, hand.getSoftScore(), hand.getHardScore())
+                choice = ''
+                while choice != 's':
+                    choice = input("[H]it or [S]tand or Split[T] or [D]oubledown").lower() #TODO: implement split and double down
+                    if choice == 'h':
+                        hit(hand)
+                        print(player, hand.getSoftScore(), hand.getHardScore())
+                        if hand.getHardScore() > 21:
+                            choice = 's'
+        while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
+            hit(dealer.hands[0])
             print("DealerHand", dealer)
-            if getHardScore(dealer) > 21:
-                tableScores[tableCount-1] = "BUST"
         scoreTable(players, dealer) #6
     #7
     clearTable(table) #8
     print("--------------------------------")
-    
-            
-
-
 
 
 '''
+Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
+used for continuous gaming or set a game count.
+
 Run the game. Put this in a for loop if you want to run the game
 X times in a row
 '''
 def game():
-    newDeck()
+    cardShoe.clear()
+    global isShuffleTime
+    isShuffleTime = False
+    loadShoe(num_decks, cardShoe)
     while not isShuffleTime:
         playHand()
         #print(isShuffleTime)
-game()
-print("Good Games!")
 
 '''
 TODO: Generate Test data for basic Feed Forward Neural Net
@@ -235,3 +171,5 @@ TODO: Build Neural Net for betting strategies
 TODO: Throw it all together in a DQRNN maybe
 '''
 
+game()
+print("Good Games!")
