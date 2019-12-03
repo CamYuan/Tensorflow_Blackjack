@@ -3,6 +3,7 @@
 class BlackjackHand:
 
     def __init__(self):
+        self.bet = 0 #to be implemented later
         self.cards = []
 
 

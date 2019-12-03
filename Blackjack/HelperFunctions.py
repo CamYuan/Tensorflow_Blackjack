@@ -1,3 +1,7 @@
+from PlayerClass import Player
+from BlackjackHandClass import BlackjackHand
+
+
 '''
 This doesn't really need to be seperated out, but might be useful when feeding
 to the Nueral Net
@@ -26,3 +30,13 @@ def loadShoe(number_of_decks):
     minIndex = math.floor((52*num_decks)*.1)
     maxIndex = math.floor((52*num_decks)*.3)
     cardShoe.insert(random.randint(minIndex,maxIndex), cutCard)
+
+
+'''
+help with the instantiation of a new player and hand with nothing in it
+'''
+def instantiatePlayer(playerName):
+    player = Player(playerName)
+    hand = BlackjackHand()
+    player.addHand(hand)
+    return [player, hand]
