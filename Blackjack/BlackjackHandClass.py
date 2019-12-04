@@ -5,6 +5,8 @@ class BlackjackHand:
     def __init__(self):
         self.bet = 0 #to be implemented later
         self.cards = []
+        self.bust = False
+        self.blackjack = False
 
 
     def __repr__(self):
@@ -23,10 +25,20 @@ class BlackjackHand:
         self.cards.append(card)
 
     '''
+    @param card object to be added
+    @return void
+    '''
+    def addBet(self, bet):
+        self.bet += bet
+
+    '''
     Clear the player's hand to get ready for the next one
     '''
     def clearHand(self):
         self.cards.clear()
+        self.bet = 0
+        self.bust = False
+        self.blackjack = False
 
         
     '''
@@ -40,7 +52,7 @@ class BlackjackHand:
         for card in self.cards:
             if card.rank > 10: hardScore += 10
             else: hardScore += card.rank
-        if hardScore > 21: hardScore = "BUST"
+        if hardScore > 21: self.bust = True
         return hardScore
 
     '''
@@ -53,12 +65,12 @@ class BlackjackHand:
     '''
     def getSoftScore(self):
         softScore = self.getHardScore()
-        if softScore == "BUST": return softScore
+        if self.bust: return softScore
         for card in self.cards:
             if card.rank == 1:
                 if softScore > 11: return softScore
                 else:
                     softScore += 10
-                    if len(self.cards) == 2 and softScore == 21: softScore = "Blackjack!"
+                    if len(self.cards) == 2 and softScore == 21: self.blackjack = True
                     return softScore
         return softScore
