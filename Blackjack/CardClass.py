@@ -6,20 +6,22 @@ class Card:
 
     #static lists
     cardSuits = ["None","Hearts","Diamonds","Clubs","Spades"]
-    cardValues = ["cutCard","Ace","Two","Three","Four","Five","Six",
-                  "Seven","Eight","Nine","Ten","Jack","Queen","King"]
+    printCardSuits = ["\u2612","\u2665","\u2666","\u2663","\u2660"]
+    cardValues = ["\u2612","A","2","3","4","5","6", "7","8","9","10","J","Q","K"]
+    
 
     def __init__(self, rank, suit):
         self.validateInputs(rank, suit)
         self.stringRank = Card.cardValues[rank]
         self.rank = rank  #1-13
         self.suit = Card.cardSuits[suit] #Hearts,Diamond,Club,Spades
+        self.reprSuit = Card.printCardSuits[suit]
         
     def __repr__(self):
-        return self.stringRank + "_of_"+self.suit
+        return self.stringRank + self.reprSuit
 
     def __str__(self):
-        return self.stringRank + "_of_"+self.suit
+        return self.stringRank + self.reprSuit
     
     def validateInputs(self, rank, suit):
         error = False
