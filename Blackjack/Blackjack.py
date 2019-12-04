@@ -1,6 +1,5 @@
 from CardClass import Card
 from HelperFunctions import *
-
 from GameState import *
 
 
@@ -29,8 +28,9 @@ Dealer should be the last index of the players
 '''
 def deal(table):
     for i in range(0,2):
-        for hand in table:
-            hit(hand)
+        for player in table:
+            for hand in player.hands:
+                hit(hand)
 
 '''
 @param list object of players
@@ -55,36 +55,36 @@ Also give an easier readout for the print object
 def scoreTable(players, dealer):
     dealerScore = dealer.hands[0].getSoftScore()
     print()
-    print("DEALER : ", dealerScore)
+    print("DEALER : ", dealerScore, dealer.hands[0])
     '''
     Check if the dealer has blackjack. If true, all players lose immediately
     UNLESS a player also has blackjack, then they PUSH.
     '''
-    if dealerScore == "BlackJack!":
+    if dealer.hands[0].blackjack:
         for player in players:
             for hand in player.hands:
-                if handScore == "BlackJack!":
-                    hand = "PUSH"
+                if hand.blackjack:
+                    currHand = "PUSH"
                 else:
-                    hand = "LOSS"
-                print(hand)
+                    currHand = "LOSS"
+                print(currHand)
     else:
         for player in players:
             for hand in player.hands:
-                print(hand.getSoftScore())
-                if handScore != "BUST":
-                    if handScore == "BlackJack!":
-                        hand = "MEGAWIN"#implement 1.5x
-                    elif dealerScore == "BUST":
-                        hand = "WIN"
-                    elif playerScore > dealerScore:
-                        hand = "WIN"
-                    elif playerScore == dealerScore:
-                        hand = "PUSH"
+                handScore = hand.getSoftScore()
+                print(handScore)
+                if not hand.bust:
+                    if hand.blackjack:
+                        currHand = "MEGAWIN"#implement 1.5x
+                    elif dealer.hands[0].bust:
+                        currHand = "WIN"
+                    elif handScore > dealerScore:
+                        currHand = "WIN"
+                    elif handScore == dealerScore:
+                        currHand = "PUSH"
                     else:
-                        hand = "LOSS"
-                print(hand)
-    printWinLoss()
+                        currHand = "LOSS"
+                print(currHand)
 
 
 '''
@@ -116,26 +116,34 @@ Discard all the cards and get ready for the next hand
 def playHand():
     #1
     deal(table) #2
-    if dealer.hands[0].getSoftScore() != "BlackJack!": #3
-        print("Dealer's up Card: " , dealer.hands[0])
+    allBlackjack = True
+    for player in players:
+        for hand in player.hands:
+            hand.getSoftScore()
+            if not hand.blackjack:
+                allBlackjack = False
+    if not dealer.hands[0].blackjack: #3
+        print("Dealer's up Card: " , dealer.hands[0].cards[1]) #2nd card is the dealers up card
         playerIndex = 0
         for player in players: #4
             for hand in player.hands:
-                print(player, hand.getSoftScore(), hand.getHardScore())
+                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 choice = ''
-                while choice != 's':
-                    choice = input("[H]it or [S]tand or Split[T] or [D]oubledown").lower() #TODO: implement split and double down
+                while choice != 's' and not hand.blackjack:
+                    print()
+                    choice = input("[H]it or [S]tand or Split[T] or [D]oubledown:").lower() #TODO: implement split and double down
                     if choice == 'h':
                         hit(hand)
-                        print(player, hand.getSoftScore(), hand.getHardScore())
+                        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                         if hand.getHardScore() > 21:
                             choice = 's'
-        while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
-            hit(dealer.hands[0])
-            print("DealerHand", dealer)
+        if not allBlackjack:
+            while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
+                hit(dealer.hands[0])
+                print("DealerHand", dealer.hands[0])
         scoreTable(players, dealer) #6
     #7
-    clearTable(table) #8
+    resetTable(table) #8
     print("--------------------------------")
 
 
@@ -146,13 +154,14 @@ used for continuous gaming or set a game count.
 Run the game. Put this in a for loop if you want to run the game
 X times in a row
 '''
-def game():
-    cardShoe.clear()
-    global isShuffleTime
-    isShuffleTime = False
-    loadShoe(num_decks, cardShoe)
-    while not isShuffleTime:
-        playHand()
+def game(numSessions):
+    for i in range(0, numSessions):
+        cardShoe.clear()
+        global isShuffleTime
+        isShuffleTime = False
+        loadShoe(num_decks, cardShoe)
+        while not isShuffleTime:
+            playHand()
         #print(isShuffleTime)
 
 '''
@@ -171,5 +180,5 @@ TODO: Build Neural Net for betting strategies
 TODO: Throw it all together in a DQRNN maybe
 '''
 
-game()
+game(3)
 print("Good Games!")
