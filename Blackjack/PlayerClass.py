@@ -1,11 +1,13 @@
-'''
-"Value" is a customization for blackjack or other card games
-'''
+from BlackjackHandClass import BlackjackHand
 
 class Player:
-    def __init__(self, name):
+    ''' Initialize a player with a name, and an inital empty hand'''
+    def __init__(self, name, bank=0):
         self.name = name  #1-13
         self.hands = []
+        hand = BlackjackHand()
+        self.addHand(hand)
+        self.bank = bank
 
 
     def __repr__(self):
@@ -32,6 +34,8 @@ class Player:
             handScores.append(hands[i].getSoftScore)
         return handScores
 
-
+    '''clear all hands and reinitialize with 1 empty hand'''
     def clearHands(self):
         self.hands.clear()
+        hand = BlackjackHand()
+        self.addHand(hand)
