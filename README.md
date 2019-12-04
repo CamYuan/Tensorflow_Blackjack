@@ -1,2 +1,2 @@
 # NeutronPlaysGames
-Nueral Net plays games
+Neural Net plays games
