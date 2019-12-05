@@ -16,7 +16,7 @@ class BlackjackHand:
     def __str__(self):
         string = ""
         return string.join(str(self.cards))
-    
+
     '''
     @param card object to be added
     @return void
@@ -40,7 +40,17 @@ class BlackjackHand:
         self.bust = False
         self.blackjack = False
 
-        
+
+    def checkBlackjack(self):
+        if len(self.cards) == 2 and self.getSoftScore == 21:
+            self.blackjack = True
+
+    def checkSplit(self):
+        if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank:
+            return True
+        else:
+            return False
+
     '''
     @return int score of player's hard hand value
 
@@ -71,6 +81,5 @@ class BlackjackHand:
                 if softScore > 11: return softScore
                 else:
                     softScore += 10
-                    if len(self.cards) == 2 and softScore == 21: self.blackjack = True
                     return softScore
         return softScore

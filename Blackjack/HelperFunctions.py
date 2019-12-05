@@ -35,3 +35,14 @@ then we also discard the rest of the shoe and generate a new shoe
 def resetTable(table):
     for player in table:
         player.clearHands()
+
+
+def dealerUpCard(dealer):
+    #2nd card is the dealers up card
+    return dealer.hands[0].cards[1]
+
+def splitHand(player, hand):
+    extraHand = BlackjackHand()
+    card = hand.cards.pop()
+    extraHand.addCard(card)
+    player.addHand(extraHand)

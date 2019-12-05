@@ -33,6 +33,18 @@ def deal(table):
                 hit(hand)
 
 '''
+If all players have busted or have blackjack, the hand is over.
+Don't deal any cards for the dealer
+'''
+def deadHand(players):
+    allBustOrBlackjack = True
+    for player in players: 
+        for hand in player.hands:
+            if not hand.blackjack or not hand.bust:
+                allBustOrBlackjack = False
+    return allBustOrBlackjack
+
+'''
 @param list object of players
 @param dealer hand
 @return void
@@ -113,31 +125,28 @@ After the dealer makes all their choices, score the table to determine winners
 Discard all the cards and get ready for the next hand
 
 '''
-def playHand():
+def playHand(table, players):
     #1
     deal(table) #2
-    allBlackjack = True
-    for player in players:
-        for hand in player.hands:
-            hand.getSoftScore()
-            if not hand.blackjack:
-                allBlackjack = False
-    if not dealer.hands[0].blackjack: #3
-        print("Dealer's up Card: " , dealer.hands[0].cards[1]) #2nd card is the dealers up card
+    '''if the dealer has blackjack, the hand is over. No insurance (currently)'''
+    if not dealer.hands[0].checkBlackjack(): #3
+        print("Dealer's up Card: " , dealerUpCard(dealer)) 
         playerIndex = 0
         for player in players: #4
             for hand in player.hands:
+                hand.checkBlackjack()
                 print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 choice = ''
                 while choice != 's' and not hand.blackjack:
                     print()
-                    choice = input("[H]it or [S]tand or Split[T] or [D]oubledown:").lower() #TODO: implement split and double down
+                    choice = input("[H]it or [S]tand or Spli[T] or [D]oubledown:").lower() #TODO: implement split and double down
                     if choice == 'h':
                         hit(hand)
                         print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                         if hand.getHardScore() > 21:
                             choice = 's'
-        if not allBlackjack:
+        ''' check if all the players in the table have busted'''
+        if deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
                 print("DealerHand", dealer.hands[0])
@@ -161,7 +170,7 @@ def game(numSessions):
         isShuffleTime = False
         loadShoe(num_decks, cardShoe)
         while not isShuffleTime:
-            playHand()
+            playHand(table, players)
         #print(isShuffleTime)
 
 '''
