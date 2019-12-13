@@ -41,8 +41,21 @@ def dealerUpCard(dealer):
     #2nd card is the dealers up card
     return dealer.hands[0].cards[1]
 
-def splitHand(player, hand):
-    extraHand = BlackjackHand()
-    card = hand.cards.pop()
-    extraHand.addCard(card)
-    player.addHand(extraHand)
+
+def betBeforeHand(players):
+    for player in players:
+        validBet = True
+        betAmount = int(input("How much do you want to bet? "))
+        print("Betting" + str(betAmount))
+        player.bet(betAmount)
+
+def payout(player, hand, position):
+    print(player.bank)
+    if position == 'WIN':
+        player.recievePayout(hand, 1)
+    elif position == 'PUSH':
+        player.recievePayout(hand, 0)
+    elif position == 'BLACKJACK':
+        player.recievePayout(hand, 1.5)
+    print(player.bank)
+    #else we have lost. The bet was already removed from the our bankroll

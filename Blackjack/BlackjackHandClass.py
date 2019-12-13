@@ -7,6 +7,7 @@ class BlackjackHand:
         self.cards = []
         self.bust = False
         self.blackjack = False
+        self.splittable = False
 
 
     def __repr__(self):
@@ -23,6 +24,8 @@ class BlackjackHand:
     '''
     def addCard(self, card):
         self.cards.append(card)
+        if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank:
+            splittable = True
 
     '''
     @param card object to be added
@@ -30,6 +33,19 @@ class BlackjackHand:
     '''
     def addBet(self, bet):
         self.bet += bet
+
+    def getBet(self):
+        return self.bet
+
+    '''
+    double the bet. We should get just one card
+    '''
+    def doubleDown(self):
+        self.bet += bet
+
+    def splitHand(self):
+        splittable = False
+        return self.cards.pop()
 
     '''
     Clear the player's hand to get ready for the next one

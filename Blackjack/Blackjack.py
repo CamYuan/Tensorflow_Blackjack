@@ -17,6 +17,7 @@ def hit(hand):
         isShuffleTime = True
         card = cardShoe.pop()
         print("----CUT CARD----")
+    #card count here I think
     hand.addCard(card)
 
 '''
@@ -38,7 +39,7 @@ Don't deal any cards for the dealer
 '''
 def deadHand(players):
     allBustOrBlackjack = True
-    for player in players: 
+    for player in players:
         for hand in player.hands:
             if not hand.blackjack or not hand.bust:
                 allBustOrBlackjack = False
@@ -80,6 +81,7 @@ def scoreTable(players, dealer):
                 else:
                     currHand = "LOSS"
                 print(currHand)
+                payout(player, hand, currHand)
     else:
         for player in players:
             for hand in player.hands:
@@ -87,7 +89,7 @@ def scoreTable(players, dealer):
                 print(handScore)
                 if not hand.bust:
                     if hand.blackjack:
-                        currHand = "MEGAWIN"#implement 1.5x
+                        currHand = "BLACKJACK"#implement 1.5x
                     elif dealer.hands[0].bust:
                         currHand = "WIN"
                     elif handScore > dealerScore:
@@ -96,7 +98,10 @@ def scoreTable(players, dealer):
                         currHand = "PUSH"
                     else:
                         currHand = "LOSS"
+                else:
+                    currHand = "BUST"
                 print(currHand)
+                payout(player, hand, currHand)
 
 
 '''
@@ -126,12 +131,11 @@ Discard all the cards and get ready for the next hand
 
 '''
 def playHand(table, players):
-    #1
+    betBeforeHand(players) #1
     deal(table) #2
     '''if the dealer has blackjack, the hand is over. No insurance (currently)'''
     if not dealer.hands[0].checkBlackjack(): #3
-        print("Dealer's up Card: " , dealerUpCard(dealer)) 
-        playerIndex = 0
+        print("Dealer's up Card: " , dealerUpCard(dealer))
         for player in players: #4
             for hand in player.hands:
                 hand.checkBlackjack()
@@ -146,11 +150,11 @@ def playHand(table, players):
                         if hand.getHardScore() > 21:
                             choice = 's'
         ''' check if all the players in the table have busted'''
-        if deadHand(players):
+        if not deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
                 print("DealerHand", dealer.hands[0])
-        scoreTable(players, dealer) #6
+    scoreTable(players, dealer) #6
     #7
     resetTable(table) #8
     print("--------------------------------")
@@ -189,5 +193,5 @@ TODO: Build Neural Net for betting strategies
 TODO: Throw it all together in a DQRNN maybe
 '''
 
-game(3)
+game(1)
 print("Good Games!")
