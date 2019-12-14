@@ -33,6 +33,26 @@ def deal(table):
             for hand in player.hands:
                 hit(hand)
 
+def playHand(player):
+    for hand in player.hands:
+        hand.checkBlackjack()
+        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+        choice = ''
+        while choice != 's' and not hand.blackjack:
+            print()
+            choice = input("[H]it or [S]tand or Spli[T] or [D]oubledown:").lower() #TODO: implement split and double down
+            if choice == 'h':
+                hit(hand)
+                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                if hand.getHardScore() > 21:
+                    choice = 's'
+            elif choice == 'd':
+                hit(hand)
+                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                choice = 's'
+            elif choice == 't':
+            else:
+                print("Error?")
 '''
 If all players have busted or have blackjack, the hand is over.
 Don't deal any cards for the dealer
@@ -130,34 +150,17 @@ After the dealer makes all their choices, score the table to determine winners
 Discard all the cards and get ready for the next hand
 
 '''
-def playHand(table, players):
+def playRound(table, players):
     betBeforeHand(players) #1
     deal(table) #2
-    '''if the dealer has blackjack, the hand is over. No insurance (currently?)'''
+    '''if the dealer has blackjack, the hand is over. No insurance (currently?)
+    Move to scoring/payout
+    '''
     if not dealer.hands[0].checkBlackjack(): #3
         print("Dealer's up Card: " , dealerUpCard(dealer))
         for player in players: #4
-            for hand in player.hands:
-                hand.checkBlackjack()
-                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
-                choice = ''
-                while choice != 's' and not hand.blackjack:
-                    print()
-                    choice = input("[H]it or [S]tand or Spli[T] or [D]oubledown:").lower() #TODO: implement split and double down
-                    if choice == 'h':
-                        hit(hand)
-                        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
-                        if hand.getHardScore() > 21:
-                            choice = 's'
-                    elif choice == 'd':
-                        hit(hand)
-                        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
-                        choice = 's'
-                    elif choice == 't':
-                    else:
-                        print("Error?")
-
-        ''' check if all the players in the table have busted'''
+            playHand(player)
+            
         if not deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
@@ -181,7 +184,7 @@ def game(numSessions):
         isShuffleTime = False
         loadShoe(num_decks, cardShoe)
         while not isShuffleTime:
-            playHand(table, players)
+            playRound(table, players)
         #print(isShuffleTime)
 
 '''
