@@ -1,5 +1,13 @@
 from BlackjackHandClass import BlackjackHand
-
+'''
+{
+    name: string,
+    hands: list,
+    bank: int,
+    sideBetBottomThree: int,
+    sideBetTopThree: int
+}
+'''
 class Player:
     ''' Initialize a player with a name, and an inital empty hand'''
     def __init__(self, name, bank=0):
@@ -32,8 +40,10 @@ class Player:
         if self.bank >= amount:
             self.hands[0].addBet(amount)
             self.bank -= amount
+            return True
         else:
             print("not enough bank roll")
+            return False
 
     def addHand(self, hand):
         self.hands.append(hand)
@@ -41,6 +51,7 @@ class Player:
 
     def splitHand(self, hand):
         extraHand = BlackjackHand()
+        extraHand.alreadySplit = True
         card = hand.splitHand()
         extraHand.addCard(card)
         extraHand.addBet(hand.getBet())

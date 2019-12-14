@@ -36,18 +36,18 @@ def resetTable(table):
     for player in table:
         player.clearHands()
 
-
+#2nd card is the dealers up card
 def dealerUpCard(dealer):
-    #2nd card is the dealers up card
     return dealer.hands[0].cards[1]
 
 
 def betBeforeHand(players):
     for player in players:
-        validBet = True
-        betAmount = int(input("How much do you want to bet? "))
-        print("Betting" + str(betAmount))
-        player.bet(betAmount)
+        validBet = False
+        while(not validBet):
+            betAmount = int(input("How much do you want to bet? "))
+            print("Betting: " + str(betAmount))
+            validBet = player.bet(betAmount)
 
 def payout(player, hand, position):
     print(player.bank)

@@ -1,13 +1,22 @@
-
-
+'''
+{
+    bet: int,
+    cards: list,
+    bust: boolean,
+    blackjack: boolean,
+    splittable: boolean,
+    alreadySplit: boolean
+}
+'''
 class BlackjackHand:
 
     def __init__(self):
-        self.bet = 0 #to be implemented later
+        self.bet = 0
         self.cards = []
         self.bust = False
         self.blackjack = False
         self.splittable = False
+        self.alreadySplit = False
 
 
     def __repr__(self):
@@ -24,7 +33,7 @@ class BlackjackHand:
     '''
     def addCard(self, card):
         self.cards.append(card)
-        if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank:
+        if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank and self.alreadySplit == False:
             splittable = True
 
     '''
@@ -45,6 +54,7 @@ class BlackjackHand:
 
     def splitHand(self):
         splittable = False
+        self.alreadySplit = True
         return self.cards.pop()
 
     '''
@@ -58,7 +68,7 @@ class BlackjackHand:
 
 
     def checkBlackjack(self):
-        if len(self.cards) == 2 and self.getSoftScore == 21:
+        if len(self.cards) == 2 and self.getSoftScore == 21 and self.alreadySplit == False:
             self.blackjack = True
 
     def checkSplit(self):
