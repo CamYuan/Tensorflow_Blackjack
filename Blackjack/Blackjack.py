@@ -149,6 +149,14 @@ def playHand(table, players):
                         print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                         if hand.getHardScore() > 21:
                             choice = 's'
+                    elif choice == 'd':
+                        hit(hand)
+                        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                        choice = 's'
+                    elif choice == 't':
+                    else:
+                        print("Error?")
+
         ''' check if all the players in the table have busted'''
         if not deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
