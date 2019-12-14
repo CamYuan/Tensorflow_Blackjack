@@ -5,46 +5,47 @@ PreGame:
 
 
 1. Players place bets
-    - Players can bet between the table min and max
-    - Players cannot bet more money than they have
-    - Immediately remove their bet from their bankroll
-    - Players may place side bets
-        - Bottom 3 bet
-        - Top 3 bet cannot be placed if bottom 3 is not placed
+    - [] Players can bet between the table min and max
+    - [x] Players cannot bet more money than they have
+    - [x] Immediately remove their bet from their bankroll
+    - [] Players may place side bets
+        - [] Bottom 3 bet
+        - [] Top 3 bet cannot be placed if bottom 3 is not placed
 2. Deal 2 cards to each player and the dealer.
-    - Deal 1 card to each person rotating clockwise.
-    - Deal the first dealer card face down.
-    - 2nd dealer card is face up
-    - All player cards are face up
-    - Each player and dealer should all have only 1 hand each
+    - [x] Deal 1 card to each person rotating clockwise.
+    - [x] Deal the first dealer card face down.
+    - [x] 2nd dealer card is face up
+    - [x] All player cards are face up
+    - [x] Each player and dealer should all have only 1 hand each
+- [] Check Side Bets (Rules TBD)
 3. Check the dealer's hand for blackjack
-    - If the dealer has blackjack, all players who do not also have blackjack lose and the dealer takes their bet
+    - [x] If the dealer has blackjack, all players who do not also have blackjack lose and the dealer takes their bet
 4. Check players hands for blackjack (2 cards with value 21. Only on initial hand)
-    - If the player has blackjack, they win immediately for 1.5x their bets
-    - Players cannot hit more cards if they have blackjack
+    - [x] If the player has blackjack, they win immediately for 1.5x their bets
+    - [x] Players cannot hit more cards if they have blackjack
 5. Clockwise, each player makes some choices about their hand(s)
-    - A player may Stand (take no more cards and pass priority to the next player)
-    - A Player may hit (get an additional card)
-        - If the cutCard is drawn, this will be the last hand played and the shoe will be shuffled
-        - After taking a hit, check the value of the players hand
-            - If their hand value is over 21, they BUST and immediately lose their bet to the dealer
-            - They may no longer split or double down
-    - A player may split (their hand becomes two hands)
-        - Their cards must be the same rank to split
-        - After splitting, they will be dealt 1 card on their first hand, play through that hand, then they will be dealt another card on their second hand
-        - Splitting Aces may only be done once (An AA hand that was created from an already split AA hand cannot be split again)
-        - Getting 21 on a split hand is not a natural blackjack, so it will only payout 1x their bet
-        - Splitting Aces will only bet dealt 1 card on split aces (they cannot hit any more cards)
-    - A player may double down (Make an additional bet, take a single additional card, then stand)
-        - Players may only double down on their initial two cards
+    - [x] A player may Stand (take no more cards and pass priority to the next player)
+    - [x] A Player may hit (get an additional card)
+        - [x] If the cutCard is drawn, this will be the last hand played and the shoe will be shuffled
+        - [x] After taking a hit, check the value of the players hand
+            - [] If their hand value is over 21, they BUST and immediately lose their bet to the dealer
+            - [] They may no longer split or double down
+    - [x] A player may split (their hand becomes two hands)
+        - [x] Their cards must be the same rank to split
+        - [] After splitting, they will be dealt 1 card on their first hand, play through that hand, then they will be dealt another card on their second hand
+        - [] Splitting Aces may only be done once (An AA hand that was created from an already split AA hand cannot be split again)
+        - [] Getting 21 on a split hand is not a natural blackjack, so it will only payout 1x their bet
+        - [] Splitting Aces will only bet dealt 1 card on split aces (they cannot hit any more cards)
+    - [] A player may double down (Make an additional bet, take a single additional card, then stand)
+        - [] Players may only double down on their initial two cards
 6. After all players have made decisions, show the dealer's hand and act accordingly
-    - Dealer must hit on anything under 17
-    - Dealer stays on a soft 17. (Some Casinos still hit)
-    - If the dealer BUSTS, all remaining players win
+    - [x] Dealer must hit on anything under 17
+    - [x] Dealer stays on a soft 17. (Some Casinos still hit)
+    - [x] If the dealer BUSTS, all remaining players win
 7. Calculate the values of all hands for everyone who has not BUST and not BLACKJACK
-    - If the player has more value than the dealer, they WIN and get 1x their bet
-    - If the player has the same value as the dealer, they PUSH and keep their bet
-    - If the player has less than the dealer, they LOSE and the dealer takes their bet
+    - [x] If the player has more value than the dealer, they WIN and get 1x their bet
+    - [x] If the player has the same value as the dealer, they PUSH and keep their bet
+    - [x] If the player has less than the dealer, they LOSE and the dealer takes their bet
 8. At this point, all players should have paid up or been paid out. Discard all hands and get ready for the next round
 
 
