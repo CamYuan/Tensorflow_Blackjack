@@ -80,7 +80,7 @@ def scoreTable(players, dealer):
                     currHand = "PUSH"
                 else:
                     currHand = "LOSS"
-                print(currHand)
+                print(player, currHand, hand)
                 payout(player, hand, currHand)
     else:
         for player in players:
@@ -100,7 +100,7 @@ def scoreTable(players, dealer):
                         currHand = "LOSS"
                 else:
                     currHand = "BUST"
-                print(currHand)
+                print(player, currHand, hand)
                 payout(player, hand, currHand)
 
 
@@ -133,7 +133,7 @@ Discard all the cards and get ready for the next hand
 def playHand(table, players):
     betBeforeHand(players) #1
     deal(table) #2
-    '''if the dealer has blackjack, the hand is over. No insurance (currently)'''
+    '''if the dealer has blackjack, the hand is over. No insurance (currently?)'''
     if not dealer.hands[0].checkBlackjack(): #3
         print("Dealer's up Card: " , dealerUpCard(dealer))
         for player in players: #4
@@ -154,8 +154,7 @@ def playHand(table, players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
                 print("DealerHand", dealer.hands[0])
-    scoreTable(players, dealer) #6
-    #7
+    scoreTable(players, dealer) #6 #7
     resetTable(table) #8
     print("--------------------------------")
 
