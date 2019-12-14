@@ -28,7 +28,8 @@ PreGame:
     - [x] A Player may hit (get an additional card)
         - [x] If the cutCard is drawn, this will be the last hand played and the shoe will be shuffled
         - [x] After taking a hit, check the value of the players hand
-            - [] If their hand value is over 21, they BUST and immediately lose their bet to the dealer
+            - [x] If their hand value is over 21, they BUST
+                - [] player loses bet immediately
             - [] They may no longer split or double down
     - [x] A player may split (their hand becomes two hands)
         - [x] Their cards must be the same rank to split
