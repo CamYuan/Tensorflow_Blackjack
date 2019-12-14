@@ -3,18 +3,18 @@ from BlackjackHandClass import BlackjackHand
 {
     name: string,
     hands: list,
-    bank: int,
+    bankroll: int,
     sideBetBottomThree: int,
     sideBetTopThree: int
 }
 '''
 class Player:
     ''' Initialize a player with a name, and an inital empty hand'''
-    def __init__(self, name, bank=0):
+    def __init__(self, name, bankroll=0):
         self.name = name  #1-13
         self.hands = []
         self.addHand(BlackjackHand())
-        self.bank = bank
+        self.bankroll = bankroll
         self.sideBetBottomThree = 0 #side bets tied to the player?
         self.sideBetTopThree = 0
 
@@ -36,25 +36,32 @@ class Player:
     Splitting or doubling down will match the bet already placed.
     This implementation does not allow 'Up-to-current-bet'
     '''
-    def bet(self, amount):
-        if self.bank >= amount:
-            self.hands[0].addBet(amount)
-            self.bank -= amount
+    def bet(self, amount, hand):
+        if self.bankroll >= amount:
+            hand.addBet(amount)
+            self.bankroll -= amount
             return True
         else:
-            print("not enough bank roll")
+            print("not enough bankroll roll")
             return False
 
     def addHand(self, hand):
         self.hands.append(hand)
 
+    def hasEnoughFunds(self):
+        if self.hands[0].getBet() <= self.bankroll:
+            return True
+        else:
+            return False
 
     def splitHand(self, hand):
         extraHand = BlackjackHand()
         extraHand.alreadySplit = True
         card = hand.splitHand()
+        if card.rank == 1:
+            extraHand.splitAces = True
         extraHand.addCard(card)
-        extraHand.addBet(hand.getBet())
+        self.bet(hand.getBet(), extraHand)
         player.addHand(extraHand)
 
     def getAllScores(self):
@@ -72,5 +79,5 @@ class Player:
         self.addHand(hand)
 
     def recievePayout(self, hand, multiplier):
-        self.bank += hand.getBet() #Give the player the initial bet back first
-        self.bank += hand.getBet()*multiplier
+        self.bankroll += hand.getBet() #Give the player the initial bet back first
+        self.bankroll += hand.getBet()*multiplier

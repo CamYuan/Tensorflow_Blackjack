@@ -4,7 +4,7 @@
     cards: list,
     bust: boolean,
     blackjack: boolean,
-    splittable: boolean,
+    canSplit: boolean,
     alreadySplit: boolean
 }
 '''
@@ -14,9 +14,11 @@ class BlackjackHand:
         self.bet = 0
         self.cards = []
         self.bust = False
-        self.blackjack = False
-        self.splittable = False
+        self.hasBlackjack = False
+        self.canDoubleDown = True
+        self.canSplit = False
         self.alreadySplit = False
+        self.splitAces = False
 
 
     def __repr__(self):
@@ -30,11 +32,18 @@ class BlackjackHand:
     '''
     @param card object to be added
     @return void
+    Players must have enough money to add their initial bet again
+    If this is the first two cards of the hand and they are the same
+    AND you did not previously split to get this hand, set canSplit to true
+    If there are more than 2 cards in the hand already
+    AND you did not split Aces, set canDoubleDown to True
     '''
     def addCard(self, card):
         self.cards.append(card)
         if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank and self.alreadySplit == False:
-            splittable = True
+            canSplit = True
+        if len(self.cards) > 2 and not self.splitAces:
+            canDoubleDown = False
 
     '''
     @param card object to be added
@@ -53,8 +62,10 @@ class BlackjackHand:
         self.bet += bet
 
     def splitHand(self):
-        splittable = False
+        self.canSplit = False
         self.alreadySplit = True
+        if self.cards[0].rank == 1:
+            self.splitAces = True
         return self.cards.pop()
 
     '''
@@ -64,22 +75,14 @@ class BlackjackHand:
         self.cards.clear()
         self.bet = 0
         self.bust = False
-        self.blackjack = False
-
+        self.hasBlackjack = False
 
     def checkBlackjack(self):
         if len(self.cards) == 2 and self.getSoftScore == 21 and self.alreadySplit == False:
-            self.blackjack = True
-
-    def checkSplit(self):
-        if len(self.cards) == 2 and self.cards[0] == self.cards[1].rank:
-            return True
-        else:
-            return False
+            self.hasBlackjack = True
 
     '''
     @return int score of player's hard hand value
-
     Also could be considered lowest possible hand
     i.e.: hand(A,5,A) has a "hard value" of 7
     '''
@@ -93,7 +96,6 @@ class BlackjackHand:
 
     '''
     @return int score of player's soft hand value
-
     Also could be considered highest possible hand
     Soft value will return the hard value if over 10
     Soft hands should always contain an Ace

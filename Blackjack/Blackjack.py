@@ -38,32 +38,40 @@ def playHand(player):
         hand.checkBlackjack()
         print(player, hand.getSoftScore(), hand.getHardScore(), hand)
         choice = ''
-        while choice != 's' and not hand.blackjack:
+        while choice != 's' and not hand.hasBlackjack:
             print()
-            choice = input("[H]it or [S]tand or Spli[T] or [D]oubledown:").lower() #TODO: implement split and double down
+            options = "[H]it or [S]tand"
+            if hand.canSplit and player.hasEnoughFunds():
+                options +=  " or Spli[T]"
+            if hand.canDoubleDown and player.hasEnoughFunds():
+                options +=  " or [D]oubledown"
+            options += ": "
+            choice = input(options).lower()
             if choice == 'h':
                 hit(hand)
                 print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 if hand.getHardScore() > 21:
                     choice = 's'
             elif choice == 'd':
+                hand.doubleDown()
                 hit(hand)
                 print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 choice = 's'
             elif choice == 't':
+                player.splitHand(hand)
             else:
-                print("Error?")
+                print("Invalid Input")
 '''
 If all players have busted or have blackjack, the hand is over.
 Don't deal any cards for the dealer
 '''
 def deadHand(players):
-    allBustOrBlackjack = True
+    deadHand = True #allBustOrBlackjack
     for player in players:
         for hand in player.hands:
-            if not hand.blackjack or not hand.bust:
-                allBustOrBlackjack = False
-    return allBustOrBlackjack
+            if hand.hasBlackjack or not hand.bust:
+                deadHand = False
+    return deadHand
 
 '''
 @param list object of players
@@ -93,10 +101,10 @@ def scoreTable(players, dealer):
     Check if the dealer has blackjack. If true, all players lose immediately
     UNLESS a player also has blackjack, then they PUSH.
     '''
-    if dealer.hands[0].blackjack:
+    if dealer.hands[0].hasBlackjack:
         for player in players:
             for hand in player.hands:
-                if hand.blackjack:
+                if hand.hasBlackjack:
                     currHand = "PUSH"
                 else:
                     currHand = "LOSS"
@@ -108,7 +116,7 @@ def scoreTable(players, dealer):
                 handScore = hand.getSoftScore()
                 print(handScore)
                 if not hand.bust:
-                    if hand.blackjack:
+                    if hand.hasBlackjack:
                         currHand = "BLACKJACK"#implement 1.5x
                     elif dealer.hands[0].bust:
                         currHand = "WIN"
@@ -120,7 +128,7 @@ def scoreTable(players, dealer):
                         currHand = "LOSS"
                 else:
                     currHand = "BUST"
-                print(player, currHand, hand)
+                print(player, currHand, handScore, hand)
                 payout(player, hand, currHand)
 
 
@@ -160,7 +168,7 @@ def playRound(table, players):
         print("Dealer's up Card: " , dealerUpCard(dealer))
         for player in players: #4
             playHand(player)
-            
+
         if not deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
