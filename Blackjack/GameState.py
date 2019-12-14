@@ -25,6 +25,8 @@ bit easier, but I should consider consolidating...
 
 Generating tableScores list based on the number of players
 '''
+tableMinBet = 10
+tableMaxBet = 1000
 players = [player1]
 table = [player1, dealer]
 numberOfHands = len(table) #should be added to if hands are split
