@@ -32,14 +32,8 @@ table = [player1, dealer]
 numberOfHands = len(table) #should be added to if hands are split
 cardShoe = []
 isShuffleTime = False
-num_decks = 1 #cardShoes generally have between 6-8 decks
+num_decks = 6 #cardShoes generally have between 6-8 decks
 
 #Card Counting
 RunningCount = 0
 SuitCounts = [0,0,0,0]
-
-'''
-I do a pretty bad job of handling the scope of some of these objects...
-Some I pass in as args, others I just reference as globals...
-I need to clean this up
-'''

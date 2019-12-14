@@ -40,7 +40,10 @@ class BlackjackHand:
     '''
     def addCard(self, card):
         self.cards.append(card)
-        if len(self.cards) == 2 and self.cards[0].rank == self.cards[1].rank and self.alreadySplit == False:
+        if len(self.cards) == 2 \
+        and (self.cards[0].rank == self.cards[1].rank \
+        or (self.cards[0].rank > 9 and self.cards[1].rank > 9) \
+        ) and self.splitAces == False:
             self.canSplit = True
         else:
             self.canSplit = False
@@ -59,12 +62,6 @@ class BlackjackHand:
     def getBet(self):
         return self.bet
 
-    '''
-    double the bet. We should get just one card
-    '''
-    def doubleDown(self):
-        self.bet += self.bet
-
     def splitHand(self):
         self.canSplit = False
         self.alreadySplit = True
@@ -82,7 +79,7 @@ class BlackjackHand:
         self.hasBlackjack = False
 
     def checkBlackjack(self):
-        if len(self.cards) == 2 and self.getSoftScore == 21 and self.alreadySplit == False:
+        if len(self.cards) == 2 and self.getSoftScore() == 21 and self.alreadySplit == False:
             self.hasBlackjack = True
 
     '''

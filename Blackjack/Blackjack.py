@@ -35,30 +35,41 @@ def deal(table):
 
 def playHand(player):
     for hand in player.hands:
+        if len(hand.cards) < 2:
+            print()
+            hit(hand)
         hand.checkBlackjack()
         print(player, hand.getSoftScore(), hand.getHardScore(), hand)
         choice = ''
-        while choice != 's' and not hand.hasBlackjack:
+        while choice != 's' and hand.getSoftScore() == 21:
             print()
             options = "[H]it or [S]tand"
+            doubleDownEnabled = False
+            splitEnabled = False
             if hand.canSplit and player.hasEnoughFunds():
                 options +=  " or Spli[T]"
+                splitEnabled = True
             if hand.canDoubleDown and player.hasEnoughFunds():
                 options +=  " or [D]oubledown"
+                doubleDownEnabled = True
             options += ": "
             choice = input(options).lower()
-            if choice == 'h':
+            if choice == 's':
+                pass
+            elif choice == 'h':
                 hit(hand)
                 print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 if hand.getHardScore() >= 21:
                     choice = 's'
-            elif choice == 'd':
-                hand.doubleDown()
+            elif choice == 'd' and doubleDownEnabled:
+                player.doubleDown(hand)
                 hit(hand)
                 print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 choice = 's'
-            elif choice == 't':
+            elif choice == 't' and splitEnabled:
                 player.splitHand(hand)
+                hit(hand)
+                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
             else:
                 print("Invalid Input")
 '''

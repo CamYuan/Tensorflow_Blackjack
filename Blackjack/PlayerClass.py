@@ -54,6 +54,10 @@ class Player:
         else:
             return False
 
+    def doubleDown(self, hand):
+        self.bet(hand.getBet(), hand)
+
+
     def splitHand(self, hand):
         extraHand = BlackjackHand()
         extraHand.alreadySplit = True
@@ -62,15 +66,7 @@ class Player:
             extraHand.splitAces = True
         extraHand.addCard(card)
         self.bet(hand.getBet(), extraHand)
-        player.addHand(extraHand)
-
-    def getAllScores(self):
-        handScores = []
-        for i in range(len(self.hands)):
-            #implement return value?
-            print("Hand " + str(i) + " : " + str(hands[i].getSoftScore))
-            handScores.append(hands[i].getSoftScore)
-        return handScores
+        self.addHand(extraHand)
 
     '''clear all hands and reinitialize with 1 empty hand'''
     def clearHands(self):
