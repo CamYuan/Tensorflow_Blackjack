@@ -52,6 +52,9 @@ PreGame:
 
 - TODO: Convert to Json... why wasn't I doing this to begin with?
 - TODO: write better unit tests
+- TODO: Code Cleanup
+- TODO: Verify multiple players can play
+- TODO: Seperate the dealer into it's own class? would repeat a lot though...
 - TODO: Generate Test data for basic Feed Forward Neural Net
     - Feed forward networks have no 'memory' so each hand state will act like an independent hand
 - TODO: Train Neural Net on test data
