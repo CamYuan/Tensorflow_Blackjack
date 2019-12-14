@@ -1,5 +1,9 @@
 '''
-"Value" is a customization for blackjack or other card games
+{
+    stringRank: string,
+    rank: int,
+    suit: string
+}
 '''
 
 class Card:
@@ -14,7 +18,7 @@ class Card:
         self.validateInputs(rank, suit)
         self.stringRank = Card.cardValues[rank] #string
         self.rank = rank  #int 1-13
-        self.suit = Card.cardSuits[suit] #string 
+        self.suit = Card.cardSuits[suit] #string
 
     def __repr__(self):
         return self.stringRank + self.suit
