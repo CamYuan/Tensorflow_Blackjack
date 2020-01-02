@@ -1,0 +1,91 @@
+import pickle
+import random
+from CardClass import Card
+from BlackjackHandClass import BlackjackHand
+import numpy as np
+from Labeler import *
+
+
+'''
+Datapoints needed
+{
+    dealerUpCard.rank:
+    SoftScore:
+    HardScore:
+    Card1.rank:
+    Card2.rank:
+}
+TODO: In the future it would be good if we can just pass the card (52 card deck) so we can also detect suits
+
+'''
+# Stand, Hit, DoubleDown, Split
+choices = ["S", "H", "D", "T"] #choices 0-3
+train_data = []
+train_labels = []
+for i in range(0, 10):
+    dealerCard = Card(random.randint(1,13),random.randint(1,4))#randomly select a value from 0-12
+    card1 = Card(random.randint(1,13),random.randint(1,4))#randomly select a value from 0-12
+    card2 = Card(random.randint(1,13),random.randint(1,4))#randomly select a value from 0-12
+    hand = BlackjackHand()
+    hand.addCard(card1)
+    hand.addCard(card2)
+    softScore = hand.getSoftScore()
+    hardScore = hand.getHardScore()
+    datapoint = [dealerCard.rank/13, softScore/21, hardScore/21, card1.rank/13, card2.rank/13]
+    # print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
+    train_data.append(datapoint) #normalize the data as we store it
+
+    # Set the training label... https://www.blackjackapprenticeship.com/blackjack-strategy-charts/
+    # Split > SoftScore > HardScore
+    choice = labeler(dealerCard, softScore, hardScore, card1, card2)
+
+    if(choice == -1):
+        print("No Label applied")
+        print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
+        exit()
+    train_labels.append(choice)
+    # train_labels.append(card + 13*(suit))
+
+
+
+#print the dataset and labels
+for i in range(len(train_data)):
+    print(train_data[i], train_labels[i])
+
+'''
+data = []
+test_data = []
+test_labels = []
+for suit in range(0,4):
+    for value in range(0,13):
+        data.append([value/12,suit/3, 13*suit+value])
+
+random.shuffle(data)
+for value, suit, label in data:
+    test_data.append([value, suit])
+    test_labels.append(label)
+'''
+'''
+for i in range(len(test_data)):
+    print(test_data[i], test_labels[i])
+'''
+
+'''
+pickle_out = open("train_data.pickle", "wb")
+pickle.dump(train_data, pickle_out)
+pickle_out.close()
+
+pickle_out = open("train_labels.pickle", "wb")
+pickle.dump(train_labels, pickle_out)
+pickle_out.close()
+
+pickle_out = open("test_data.pickle", "wb")
+pickle.dump(test_data, pickle_out)
+pickle_out.close()
+
+pickle_out = open("test_labels.pickle", "wb")
+pickle.dump(test_labels, pickle_out)
+pickle_out.close()
+
+print("Finished creating 10,000 training datapoints and 52 test datapoints.")
+'''
