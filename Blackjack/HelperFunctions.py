@@ -26,9 +26,6 @@ def loadShoe(numberOfDecks, cardShoe):
     cardShoe.insert(random.randint(minIndex,maxIndex), cutCard)
 
 '''
-@param list object of all person's hands
-@return void
-
 Discard's all player's hands and the dealer's hand. If we hit the cutCard
 then we also discard the rest of the shoe and generate a new shoe
 '''
@@ -39,27 +36,3 @@ def resetTable(table):
 #2nd card is the dealers up card
 def dealerUpCard(dealer):
     return dealer.hands[0].cards[1]
-
-
-def betBeforeHand(players):
-    for player in players:
-        validBet = False
-        while(not validBet):
-            try:
-                betAmount = int(input("How much do you want to bet? "))
-                print("Betting: " + str(betAmount))
-                validBet = player.bet(betAmount, player.hands[0])
-            except:
-                print("Invalid Bet. Please enter a number")
-                validBet = False
-
-def payout(player, hand, position):
-    print(player.bankroll)
-    if position == 'WIN':
-        player.recievePayout(hand, 1)
-    elif position == 'PUSH':
-        player.recievePayout(hand, 0)
-    elif position == 'BLACKJACK':
-        player.recievePayout(hand, 1.5)
-    print(player.bankroll)
-    #else we have lost. The bet was already removed from the our bankroll

@@ -2,6 +2,28 @@ from CardClass import Card
 from HelperFunctions import *
 from GameState import *
 
+def betBeforeHand(players):
+    for player in players:
+        validBet = False
+        while(not validBet):
+            try:
+                betAmount = int(input("How much do you want to bet? "))
+                print("Betting: " + str(betAmount))
+                validBet = player.bet(betAmount, player.hands[0])
+            except:
+                print("Invalid Bet. Please enter a number")
+                validBet = False
+
+def payout(player, hand, position):
+    print(player.bankroll)
+    if position == 'WIN':
+        player.recievePayout(hand, 1)
+    elif position == 'PUSH':
+        player.recievePayout(hand, 0)
+    elif position == 'BLACKJACK':
+        player.recievePayout(hand, 1.5)
+    print(player.bankroll)
+    #else we have lost. The bet was already removed from the our bankroll
 
 '''
 @param list object of a single player
