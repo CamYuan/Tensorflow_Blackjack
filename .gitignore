@@ -1,2 +1,3 @@
 *.pickle
+**/checkpoints
 Blackjack/__pycache__/*
