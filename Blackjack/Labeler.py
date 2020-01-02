@@ -1,4 +1,5 @@
 def labeler(dealerCard, softScore, hardScore, card1, card2):
+    #TODO: Make this not so horrendous
     # print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
     choice = -1
     # if(card1.rank == card2.rank or (card1.rank > 9 and card2.rank > 9)):
@@ -92,7 +93,7 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
         #----------SOFTSCORE-----------------
         else: #softscore basic strategy
             if(dealerCard.rank == 1): #breaking this out so I don't have to put it in every other if statemet
-                if(softScore >= 17):
+                if(softScore >= 19):
                     choice = 0
                 else:
                     choice = 1

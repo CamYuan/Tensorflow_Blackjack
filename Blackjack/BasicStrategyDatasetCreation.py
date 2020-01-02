@@ -68,7 +68,7 @@ for upcard in range(1,14):
             softScore = hand.getSoftScore()
             hardScore = hand.getHardScore()
             datapoint = [dealerCard.rank/13, softScore/21, hardScore/21, card1.rank/13, card2.rank/13]
-            # print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
+            # print("[", dealerCard.rank, softScore, hardScore, card1.rank, card2.rank, "]", sep = ' ')
 
             # Set the training label... https://www.blackjackapprenticeship.com/blackjack-strategy-charts/
             # Split > SoftScore > HardScore
@@ -78,6 +78,7 @@ for upcard in range(1,14):
                 print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
                 exit()
             datapoint.append(choice)
+            print("[", dealerCard.rank, softScore, hardScore, card1.rank, card2.rank, "]", choices[choice])
             data.append(datapoint) #normalize the data as we store it
 
 # random.shuffle(data)
@@ -85,8 +86,8 @@ for datapoint in data:
     test_data.append(datapoint[:-1])
     test_labels.append(datapoint[-1])
 
-for i in range(len(test_data)):
-    print(test_data[i], test_labels[i])
+# for i in range(len(test_data)):
+#     print(test_data[i], test_labels[i])
 
 
 
