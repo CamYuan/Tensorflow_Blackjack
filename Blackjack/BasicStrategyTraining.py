@@ -1,10 +1,7 @@
-
 import pickle
 import tensorflow as tf
-from tensorflow.keras import layers
 import numpy as np
-
-
+from Model_128_64_4 import *
 
 train_data_file ="train_data.pickle"
 train_labels_file = "train_labels.pickle"
@@ -37,26 +34,16 @@ pickle_in.close()
 #     print(test_data[i], test_labels[i])
 
 print("Building Model")
-model = tf.keras.Sequential()
-# Adds a densely-connected layer with 64 units to the model:
-model.add(layers.Dense(108, activation='relu'))
-# Add another:
-model.add(layers.Dense(64, activation='relu'))
-# Add a softmax layer with 10 output units:
-model.add(layers.Dense(4, activation='softmax'))
+model = create_model()
 
-model.compile(optimizer="adam",
-              loss='sparse_categorical_crossentropy',
-              metrics=['accuracy'])
-
-model.fit(train_data, train_labels, epochs=25, batch_size=500)
+model.fit(train_data, train_labels, epochs=10, batch_size=500)
 # evaluation = model.evaluate(test_data, test_labels, batch_size=1)
-# print(evaluation)
-for i in range(20):
-    output = model.predict(np.expand_dims(test_data[i], axis=0))
-    print(test_data[i], np.argmax(output), test_labels[i])
+# loss, acc = model.evaluate(test_data,  test_labels)
+# print("loss", loss)
+# print("Accuracy", acc)
+
+# for i in range(20):
+#     output = model.predict(np.expand_dims(test_data[i], axis=0))
+#     print(test_data[i], np.argmax(output), test_labels[i])
 
 model.save_weights('./checkpoints/TrainedModel')
-# results = model.predict(np.expand_dims(test_data[0], axis=0))
-# print(results[0])
-# model.evaluate(data, labels, batch_size=32)

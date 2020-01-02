@@ -18,7 +18,7 @@ Datapoints needed
 TODO: In the future it would be good if we can just pass the card (52 card deck) so we can also detect suits
 
 '''
-numTrainingDataPoints = 100000
+numTrainingDataPoints = 1000000
 # Stand, Hit, DoubleDown, Split
 choices = ["S", "H", "D", "T"] #choices 0-3
 train_data = []
@@ -78,7 +78,7 @@ for upcard in range(1,14):
                 print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
                 exit()
             datapoint.append(choice)
-            print("[", dealerCard.rank, softScore, hardScore, card1.rank, card2.rank, "]", choices[choice])
+            # print("[", dealerCard.rank, softScore, hardScore, card1.rank, card2.rank, "]", choices[choice])
             data.append(datapoint) #normalize the data as we store it
 
 # random.shuffle(data)
