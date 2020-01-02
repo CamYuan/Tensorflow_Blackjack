@@ -1,5 +1,5 @@
 def labeler(dealerCard, softScore, hardScore, card1, card2):
-    print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
+    # print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
     choice = -1
     # if(card1.rank == card2.rank or (card1.rank > 9 and card2.rank > 9)):
     # basic strategy says to never split 10s so we won't include that in the check
@@ -38,6 +38,7 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
             '''elif(card1.rank > 9):
                 pass '''
     if(choice == -1): #Check if the split logic was hit. Not all splittable pairs result ina split
+    #----------HARDSCORE-----------------
         if (softScore == hardScore): #hardscore table since they are the same
             if(dealerCard.rank == 1): #breaking this out so I don't have to put it in every other if statemet
                 if(hardScore >= 17):
@@ -79,6 +80,8 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
                 elif(hardScore == 10):
                     if(dealerCard.rank < 10):
                         choice = 2
+                    else:
+                        choice = 1
                 elif(hardScore == 9):
                     if(dealerCard.rank > 2 and dealerCard.rank < 7): #3,4,5,6
                         choice = 2
@@ -86,6 +89,7 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
                         choice = 1
                 elif(hardScore < 9):
                     choice = 1
+        #----------SOFTSCORE-----------------
         else: #softscore basic strategy
             if(dealerCard.rank == 1): #breaking this out so I don't have to put it in every other if statemet
                 if(softScore >= 17):
