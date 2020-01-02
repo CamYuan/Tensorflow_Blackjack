@@ -63,7 +63,7 @@ def playHand(player):
         hand.checkBlackjack()
         print(player, hand.getSoftScore(), hand.getHardScore(), hand)
         choice = ''
-        while choice != 's' and hand.getSoftScore() == 21:
+        while choice != 's' and hand.getSoftScore() != 21:
             print()
             options = "[H]it or [S]tand"
             doubleDownEnabled = False
