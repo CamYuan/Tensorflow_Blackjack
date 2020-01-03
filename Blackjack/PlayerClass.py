@@ -17,6 +17,9 @@ class Player:
         self.bankroll = bankroll
         self.sideBetBottomThree = 0 #side bets tied to the player?
         self.sideBetTopThree = 0
+        self.wins = 0
+        self.losses = 0
+        self.pushes = 0
 
     def __repr__(self):
         return self.name

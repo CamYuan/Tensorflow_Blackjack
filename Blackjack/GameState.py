@@ -29,7 +29,6 @@ tableMinBet = 10
 tableMaxBet = 1000
 players = [player1]
 table = [player1, dealer]
-numberOfHands = len(table) #should be added to if hands are split
 cardShoe = []
 isShuffleTime = False
 num_decks = 6 #cardShoes generally have between 6-8 decks

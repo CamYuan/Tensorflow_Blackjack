@@ -7,7 +7,8 @@ def betBeforeHand(players):
         validBet = False
         while(not validBet):
             try:
-                betAmount = int(input("How much do you want to bet? "))
+                betAmount = 5
+                # betAmount = int(input("How much do you want to bet? "))
                 print("Betting: " + str(betAmount))
                 validBet = player.bet(betAmount, player.hands[0])
             except:
@@ -76,6 +77,8 @@ def playHand(player):
                 doubleDownEnabled = True
             options += ": "
             choice = input(options).lower()
+            if(choice == "d" and doubleDownEnabled == False):
+                choice = 'h'
             if choice == 's':
                 pass
             elif choice == 'h':
@@ -139,28 +142,35 @@ def scoreTable(players, dealer):
             for hand in player.hands:
                 if hand.hasBlackjack:
                     currHand = "PUSH"
+                    player.pushes += 1
                 else:
                     currHand = "LOSS"
+                    player.losses += 1
                 print(player, currHand, hand)
                 payout(player, hand, currHand)
     else:
         for player in players:
             for hand in player.hands:
                 handScore = hand.getSoftScore()
-                print(handScore)
                 if not hand.bust:
                     if hand.hasBlackjack:
                         currHand = "BLACKJACK"#implement 1.5x
+                        player.wins += 1
                     elif dealer.hands[0].bust:
                         currHand = "WIN"
+                        player.wins += 1
                     elif handScore > dealerScore:
                         currHand = "WIN"
+                        player.wins += 1
                     elif handScore == dealerScore:
                         currHand = "PUSH"
+                        player.pushes += 1
                     else:
                         currHand = "LOSS"
+                        player.losses += 1
                 else:
                     currHand = "BUST"
+                    player.losses += 1
                 print(player, currHand, handScore, hand)
                 payout(player, hand, currHand)
 
@@ -191,8 +201,11 @@ After the dealer makes all their choices, score the table to determine winners
 Discard all the cards and get ready for the next hand
 
 '''
+totalHands = 0
 def playRound(table, players):
+    global totalHands
     betBeforeHand(players) #1
+    totalHands += 1
     deal(table) #2
     '''if the dealer has blackjack, the hand is over. No insurance (currently?)
     Move to scoring/payout
@@ -209,25 +222,3 @@ def playRound(table, players):
     scoreTable(players, dealer) #6 #7
     resetTable(table) #8
     print("--------------------------------")
-
-
-'''
-Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
-used for continuous gaming or set a game count.
-
-Run the game. Put this in a for loop if you want to run the game
-X times in a row
-'''
-def game(numSessions):
-    for i in range(0, numSessions):
-        cardShoe.clear()
-        global isShuffleTime
-        isShuffleTime = False
-        loadShoe(num_decks, cardShoe)
-        while not isShuffleTime:
-            playRound(table, players)
-        #print(isShuffleTime)
-
-
-game(1)
-print("Good Games!")
