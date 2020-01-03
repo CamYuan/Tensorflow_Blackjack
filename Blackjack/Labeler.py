@@ -1,10 +1,10 @@
-def labeler(dealerCard, softScore, hardScore, card1, card2):
+def labeler(dealerCard, softScore, hardScore, card1, canSplit, canDoubleDown):
     #TODO: Make this not so horrendous
     # print(dealerCard.rank, softScore, hardScore, card1.rank, card2.rank)
     choice = -1
     # if(card1.rank == card2.rank or (card1.rank > 9 and card2.rank > 9)):
     # basic strategy says to never split 10s so we won't include that in the check
-    if(card1.rank == card2.rank):
+    if(canSplit):
         #at this point, we know that the cards are splittable
         if(dealerCard.rank == 1): #breaking this out so I don't have to put it in every other if statemet
             if(card1.rank == 1 or card1.rank == 8):
@@ -44,7 +44,7 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
             if(dealerCard.rank == 1): #breaking this out so I don't have to put it in every other if statemet
                 if(hardScore >= 17):
                     choice = 0
-                elif(hardScore == 11):
+                elif(canDoubleDown and hardScore == 11):
                     choice = 2
                 else:
                     choice = 1
@@ -77,14 +77,17 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
                     else:
                         choice = 1
                 elif(hardScore == 11):
-                    choice = 2
+                    if(canDoubleDown):
+                        choice = 2
+                    else:
+                        choice = 1
                 elif(hardScore == 10):
-                    if(dealerCard.rank < 10):
+                    if(canDoubleDown and dealerCard.rank < 10 ):
                         choice = 2
                     else:
                         choice = 1
                 elif(hardScore == 9):
-                    if(dealerCard.rank > 2 and dealerCard.rank < 7): #3,4,5,6
+                    if(canDoubleDown and dealerCard.rank > 2 and dealerCard.rank < 7): #3,4,5,6
                         choice = 2
                     else:
                         choice = 1
@@ -101,39 +104,39 @@ def labeler(dealerCard, softScore, hardScore, card1, card2):
                 if(softScore >= 20):
                     choice = 0
                 if(softScore == 19):
-                    if(dealerCard.rank == 6):
+                    if(canDoubleDown and dealerCard.rank == 6):
                         choice = 2
                     else:
                         choice = 0
                 elif(softScore == 18):
-                    if(dealerCard.rank < 7):
+                    if(canDoubleDown and dealerCard.rank < 7):
                         choice = 2
-                    elif(dealerCard.rank == 7 or dealerCard.rank == 8):
-                        choice = 0
-                    else:
+                    elif(dealerCard.rank > 8):
                         choice = 1
+                    else:
+                        choice = 0
                 elif(softScore == 17):
-                    if(dealerCard.rank < 7 and dealerCard.rank > 2): #3,4,5,6
+                    if(canDoubleDown and dealerCard.rank < 7 and dealerCard.rank > 2): #3,4,5,6
                         choice = 2
                     else:
                         choice = 1
                 elif(softScore == 16):
-                    if(dealerCard.rank < 7 and dealerCard.rank > 3): #4,5,6
+                    if(canDoubleDown and dealerCard.rank < 7 and dealerCard.rank > 3): #4,5,6
                         choice = 2
                     else:
                         choice = 1
                 elif(softScore == 15):
-                    if(dealerCard.rank < 7 and dealerCard.rank > 3): #4,5,6
+                    if(canDoubleDown and dealerCard.rank < 7 and dealerCard.rank > 3): #4,5,6
                         choice = 2
                     else:
                         choice = 1
                 elif(softScore == 14):
-                    if(dealerCard.rank < 7 and dealerCard.rank > 4): #5,6
+                    if(canDoubleDown and dealerCard.rank < 7 and dealerCard.rank > 4): #5,6
                         choice = 2
                     else:
                         choice = 1
                 elif(softScore == 13):
-                    if(dealerCard.rank < 7 and dealerCard.rank > 4): #5,6
+                    if(canDoubleDown and dealerCard.rank < 7 and dealerCard.rank > 4): #5,6
                         choice = 2
                     else:
                         choice = 1
