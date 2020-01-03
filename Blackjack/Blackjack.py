@@ -233,11 +233,12 @@ def playRound(table, players):
 
 alldecisions = []
 def getModelPrediction(dealer, hand):
-    inputs = [hand.getSoftScore()/21, hand.getHardScore()/21, dealerUpCard(dealer).rank/13, hand.cards[0].rank/13, int(hand.canSplit)/1.0, int(hand.canDoubleDown)/1.0, len(hand.cards)/14]
-    output = model.predict(np.expand_dims(inputs, axis=0))
+    inputs = [hand.getSoftScore(), hand.getHardScore(), dealerUpCard(dealer).rank, hand.cards[0].rank, hand.canSplit, hand.canDoubleDown, len(hand.cards)]
+    normalizedInputs =[inputs[0]/21, inputs[1]/21, inputs[2]/13, inputs[3]/13, int(inputs[4])/1.0, int(inputs[5])/1.0, inputs[6]/14]
+    output = model.predict(np.expand_dims(normalizedInputs, axis=0))
     choice = choices[np.argmax(output)].lower()
-    print(dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank, choice)
-    alldecisions.append([dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank, choice])
+    print(inputs, choice)
+    alldecisions.append(inputs.append(choice))
     return choice
 '''
 Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
