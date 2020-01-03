@@ -36,3 +36,8 @@ num_decks = 6 #cardShoes generally have between 6-8 decks
 #Card Counting
 RunningCount = 0
 SuitCounts = [0,0,0,0]
+
+choices = ["S", "H", "D", "T"] #choices 0-3
+from Model_128_64_4 import *
+model = create_model()
+model.load_weights('./checkpoints/TrainedModel')

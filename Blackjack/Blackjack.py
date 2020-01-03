@@ -1,6 +1,7 @@
 from CardClass import Card
 from HelperFunctions import *
 from GameState import *
+import numpy as np
 
 def betBeforeHand(players):
     for player in players:
@@ -36,10 +37,10 @@ If the cutCard is dealt, this will be the last hand. Set isShuffleTime to true
 def hit(hand):
     card = cardShoe.pop()
     if(card.rank == 0):
+        print("----------------------CUT CARD----------------------")
         global isShuffleTime
         isShuffleTime = True
         card = cardShoe.pop()
-        print("----CUT CARD----")
     #card count here I think
     hand.addCard(card)
 
@@ -57,6 +58,7 @@ def deal(table):
                 hit(hand)
 
 def playHand(player):
+    global dealer
     for hand in player.hands:
         if len(hand.cards) < 2:
             print()
@@ -76,7 +78,10 @@ def playHand(player):
                 options +=  " or [D]oubledown"
                 doubleDownEnabled = True
             options += ": "
-            choice = input(options).lower()
+            # choice = input(options).lower()
+            output = model.predict(np.expand_dims([dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank], axis=0))
+            choice = choices[np.argmax(output)].lower()
+            print(choice)
             if(choice == "d" and doubleDownEnabled == False):
                 choice = 'h'
             if choice == 's':
@@ -222,3 +227,28 @@ def playRound(table, players):
     scoreTable(players, dealer) #6 #7
     resetTable(table) #8
     print("--------------------------------")
+
+'''
+Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
+used for continuous gaming or set a game count.
+
+Run the game. Put this in a for loop if you want to run the game
+X times in a row
+'''
+def game(numSessions):
+    for i in range(0, numSessions):
+        cardShoe.clear()
+        global isShuffleTime
+        isShuffleTime = False
+        loadShoe(num_decks, cardShoe)
+        while not isShuffleTime:
+            playRound(table, players)
+        #print(isShuffleTime)
+
+
+game(1)
+
+print(player1.wins, "-", player1.losses, "-", player1.pushes, "/", totalHands )
+print(player1.wins/totalHands, "-", player1.losses/totalHands, "-", player1.pushes/totalHands )
+print(player1.wins/player1.losses)
+print("Good Games!")
