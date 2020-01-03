@@ -17,20 +17,9 @@ train_labels = pickle.load(pickle_in)
 train_labels = np.array(train_labels)
 pickle_in.close()
 
-# for i in range(len(test_data)):
-#     print(test_data[i], test_labels[i])
-
 print("Building Model")
 model = create_model()
 
 model.fit(train_data, train_labels, epochs=20, batch_size=500)
-# evaluation = model.evaluate(test_data, test_labels, batch_size=1)
-# loss, acc = model.evaluate(test_data,  test_labels)
-# print("loss", loss)
-# print("Accuracy", acc)
-
-# for i in range(20):
-#     output = model.predict(np.expand_dims(test_data[i], axis=0))
-#     print(test_data[i], np.argmax(output), test_labels[i])
 
 model.save_weights('./checkpoints/TrainedModel')
