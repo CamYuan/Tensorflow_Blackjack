@@ -1,29 +1,36 @@
-
+from Labeler import *
 from Model_128_64_4 import *
 import pickle
 import numpy as np
+from CardClass import Card
 
-test_data_file = "test_data.pickle"
-test_labels_file = "test_labels.pickle"
+choices = ["S", "H", "D", "T"] #choices 0-3
+data_file = "alldecisions.pickle"
 
-print("Data is already normalized")
-
-pickle_in = open(test_data_file, "rb")
-test_data = pickle.load(pickle_in)
-test_data = np.array(test_data)
+pickle_in = open(data_file, "rb")
+data_input = pickle.load(pickle_in)
 pickle_in.close()
 
-pickle_in = open(test_labels_file, "rb")
-test_labels = pickle.load(pickle_in)
-test_labels = np.array(test_labels)
-pickle_in.close()
+# data = []
+# labels = []
+# for datapoint in data_input:
+#     data.append(datapoint[:-1])
+#     labels.append(datapoint[-1])
 
-# Create a new model instance
-model = create_model()
+for dealerCard, softScore, hardScore, card1, card2, label in data_input:
+    dealerCard = Card(dealerCard,1)#randomly select a value from 0-12
+    card1 = Card(card1,1)#randomly select a value from 0-12
+    card2 = Card(card2,1) #randomly select a value from 0-12
+    if( choices[labeler(dealerCard, softScore, hardScore, card1, card2)].lower() != label ):
+        print(dealerCard, softScore, hardScore, card1, card2, choices[labeler(dealerCard, softScore, hardScore, card1, card2)].lower(), label )
 
-# Restore the weights
-model.load_weights('./checkpoints/TrainedModel')
 
-loss, acc = model.evaluate(test_data,  test_labels, verbose=0)
-print("loss", loss)
-print("Accuracy", acc)
+# # Create a new model instance
+# model = create_model()
+#
+# # Restore the weights
+# model.load_weights('./checkpoints/TrainedModel')
+#
+# loss, acc = model.evaluate(test_data,  test_labels, verbose=0)
+# print("loss", loss)
+# print("Accuracy", acc)
