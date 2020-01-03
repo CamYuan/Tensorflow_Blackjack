@@ -79,11 +79,14 @@ def playHand(player):
                 doubleDownEnabled = True
             options += ": "
             # choice = input(options).lower()
-            output = model.predict(np.expand_dims([dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank], axis=0))
-            choice = choices[np.argmax(output)].lower()
-            print(choice)
-            if(choice == "d" and doubleDownEnabled == False):
+            choice = getModelPrediction(dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank)
+            print(dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank, choice)
+            if(choice == 'd' and doubleDownEnabled == False): #correct decisions that are not game legal
                 choice = 'h'
+                print("switching to hit")
+            if(choice == 't' and hand.canSplit == False): #correct decisions that are not game legal
+                choice = 'h'
+                print("switching to hit")
             if choice == 's':
                 pass
             elif choice == 'h':
@@ -228,6 +231,12 @@ def playRound(table, players):
     resetTable(table) #8
     print("--------------------------------")
 
+alldecisions = []
+def getModelPrediction(dealerCard, softScore, hardScore, card1, card2):
+    output = model.predict(np.expand_dims([(dealerCard-1)/13, softScore/21, hardScore/21, (card1-1)/13, (card2-1)/13], axis=0))
+    choice = choices[np.argmax(output)].lower()
+    alldecisions.append([dealerCard, softScore, hardScore, card1, card2, choice])
+    return choice
 '''
 Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
 used for continuous gaming or set a game count.
@@ -246,9 +255,8 @@ def game(numSessions):
         #print(isShuffleTime)
 
 
-game(1)
+game(100)
 
 print(player1.wins, "-", player1.losses, "-", player1.pushes, "/", totalHands )
-print(player1.wins/totalHands, "-", player1.losses/totalHands, "-", player1.pushes/totalHands )
-print(player1.wins/player1.losses)
+print("{:.3%}".format(player1.wins/totalHands), "-", "{:.3%}".format(player1.losses/totalHands), "-", "{:.3%}".format(player1.pushes/totalHands) )
 print("Good Games!")
