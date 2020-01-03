@@ -24,6 +24,10 @@ model = create_model()
 # Restore the weights
 model.load_weights('./checkpoints/TrainedModel')
 
+# for i in range(20):
+#     output = model.predict(np.expand_dims(test_data[i], axis=0))
+#     print(test_data[i], np.argmax(output), test_labels[i])
+
 loss, acc = model.evaluate(test_data,  test_labels, verbose=0)
 print("loss", loss)
 print("Accuracy", acc)

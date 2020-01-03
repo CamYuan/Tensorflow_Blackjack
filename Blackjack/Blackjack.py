@@ -81,12 +81,12 @@ def playHand(player):
             options += ": "
             # choice = input(options).lower()
             choice = getModelPrediction(dealer, hand)
-            if(choice == 'd' and doubleDownEnabled == False): #correct decisions that are not game legal
-                choice = 'h'
-                print("switching to hit")
-            if(choice == 't' and hand.canSplit == False): #correct decisions that are not game legal
-                choice = 'h'
-                print("switching to hit")
+            # if(choice == 'd' and doubleDownEnabled == False): #correct decisions that are not game legal
+            #     choice = 'h'
+            #     print("switching to hit")
+            # if(choice == 't' and hand.canSplit == False): #correct decisions that are not game legal
+            #     choice = 'h'
+            #     print("switching to hit")
             if choice == 's':
                 pass
             elif choice == 'h':
@@ -233,8 +233,8 @@ def playRound(table, players):
 
 alldecisions = []
 def getModelPrediction(dealer, hand):
-    inputs = [dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank]
-    output = model.predict(np.expand_dims([inputs[0]/13, inputs[1]/21, inputs[2]/21,inputs[3]/13, inputs[4]/13], axis=0))
+    inputs = [hand.getSoftScore()/21, hand.getHardScore()/21, dealerUpCard(dealer).rank/13, hand.cards[0].rank/13, int(hand.canSplit)/1.0, int(hand.canDoubleDown)/1.0, len(hand.cards)/14]
+    output = model.predict(np.expand_dims(inputs, axis=0))
     choice = choices[np.argmax(output)].lower()
     print(dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank, choice)
     alldecisions.append([dealerUpCard(dealer).rank, hand.getSoftScore(), hand.getHardScore(), hand.cards[0].rank, hand.cards[1].rank, choice])
@@ -260,7 +260,7 @@ def game(numSessions):
 # text_trap = io.StringIO()
 # sys.stdout = text_trap
 
-game(100)
+game(20)
 # sys.stdout = sys.__stdout__
 
 print(player1.wins, "-", player1.losses, "-", player1.pushes, "/", totalHands )
