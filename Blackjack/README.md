@@ -29,16 +29,16 @@ PreGame:
         - [x] If the cutCard is drawn, this will be the last hand played and the shoe will be shuffled
         - [x] After taking a hit, check the value of the players hand
             - [x] If their hand value is over 21, they BUST
-                - [] player loses bet immediately
-            - [] They may no longer split or double down
+                - [x] player loses bet immediately (deducted when they make the bet. Loss is declared later)
+            - [x] They may no longer split or double down
     - [x] A player may split (their hand becomes two hands)
         - [x] Their cards must be the same rank to split
-        - [] After splitting, they will be dealt 1 card on their first hand, play through that hand, then they will be dealt another card on their second hand
-        - [] Splitting Aces may only be done once (An AA hand that was created from an already split AA hand cannot be split again)
-        - [] Getting 21 on a split hand is not a natural blackjack, so it will only payout 1x their bet
+        - [x] After splitting, they will be dealt 1 card on their first hand, play through that hand, then they will be dealt another card on their second hand
+        - [x] Splitting Aces may only be done once (An AA hand that was created from an already split AA hand cannot be split again)
+        - [x] Getting 21 on a split hand is not a natural blackjack, so it will only payout 1x their bet
         - [] Splitting Aces will only bet dealt 1 card on split aces (they cannot hit any more cards)
-    - [] A player may double down (Make an additional bet, take a single additional card, then stand)
-        - [] Players may only double down on their initial two cards
+    - [x] A player may double down (Make an additional bet, take a single additional card, then stand)
+        - [x] Players may only double down on their initial two cards
 6. After all players have made decisions, show the dealer's hand and act accordingly
     - [x] Dealer must hit on anything under 17
     - [x] Dealer stays on a soft 17. (Some Casinos still hit)

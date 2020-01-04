@@ -87,6 +87,8 @@ def playHand(player):
             # if(choice == 't' and hand.canSplit == False): #correct decisions that are not game legal
             #     choice = 'h'
             #     print("switching to hit")
+            if(hand.splitAces): #Only get 1 card on split Aces
+                choice = 's'
             if choice == 's':
                 pass
             elif choice == 'h':
@@ -102,6 +104,8 @@ def playHand(player):
             elif choice == 't' and splitEnabled:
                 player.splitHand(hand)
                 hit(hand)
+                if(hand.splitAces): #Only get 1 card on split Aces
+                    choice = 's'
                 # print(player, hand.getSoftScore(), hand.getHardScore(), hand)
             else:
                 print("Invalid Input")
