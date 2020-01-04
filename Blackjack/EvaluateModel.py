@@ -3,8 +3,8 @@ from Model_128_64_4 import *
 import pickle
 import numpy as np
 
-test_data_file = "test_data.pickle"
-test_labels_file = "test_labels.pickle"
+test_data_file = "train_data.pickle"
+test_labels_file = "train_labels.pickle"
 
 print("Data is already normalized")
 

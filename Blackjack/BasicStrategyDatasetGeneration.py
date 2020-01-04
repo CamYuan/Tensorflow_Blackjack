@@ -20,9 +20,9 @@ Datapoints needed
 TODO: In the future it would be good if we can just pass the card (52 card deck) so we can also detect suits
 
 '''
-TwoCardDatapoints = 100000
-ThreeCardDatapoints = 100000
-AceThreshhold = 10000 #make sure there are plenty of Ace cases for soft score valuing
+TwoCardDatapoints = 500000
+ThreeCardDatapoints = 500000
+AceThreshhold = 50000 #make sure there are plenty of Ace cases for soft score valuing
 train_data_file = "train_data.pickle"
 train_labels_file = "train_labels.pickle"
 # Stand, Hit, DoubleDown, Split

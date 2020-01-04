@@ -20,6 +20,6 @@ pickle_in.close()
 print("Building Model")
 model = create_model()
 
-model.fit(train_data, train_labels, epochs=20, batch_size=500)
+model.fit(train_data, train_labels, epochs=10, batch_size=500)
 
 model.save_weights('./checkpoints/TrainedModel')
