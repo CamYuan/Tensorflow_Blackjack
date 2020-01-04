@@ -5,7 +5,7 @@ import numpy as np
 from CardClass import Card
 
 choices = ["S", "H", "D", "T"] #choices 0-3
-data_file = "alldecisions.pickle"
+data_file = "BIG_alldecisions.pickle"
 
 pickle_in = open(data_file, "rb")
 data_input = pickle.load(pickle_in)
@@ -17,12 +17,16 @@ pickle_in.close()
 #     data.append(datapoint[:-1])
 #     labels.append(datapoint[-1])
 
-for dealerCard, softScore, hardScore, card1, card2, label in data_input:
+incorrect = 0
+for softScore, hardScore, dealerCard, card1, canSplit, canDoubleDown, numberOfCards, label in data_input:
     dealerCard = Card(dealerCard,1)#randomly select a value from 0-12
-    card1 = Card(card1,1)#randomly select a value from 0-12
-    card2 = Card(card2,1) #randomly select a value from 0-12
-    if( choices[labeler(dealerCard, softScore, hardScore, card1, card2)].lower() != label ):
-        print(dealerCard, softScore, hardScore, card1, card2, choices[labeler(dealerCard, softScore, hardScore, card1, card2)].lower(), label )
+    card1 = Card(card1,1)#randomly select a value from 0-12]
+    choice = choices[labeler(dealerCard, softScore, hardScore, card1, canSplit, canDoubleDown)].lower()
+    if( choice != label ):
+        incorrect += 1
+        print(softScore, hardScore, dealerCard, card1, canSplit, canDoubleDown, numberOfCards, choice, label )
+print(len(data_input))
+print(incorrect)
 
 
 # # Create a new model instance

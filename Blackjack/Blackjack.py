@@ -12,21 +12,21 @@ def betBeforeHand(players):
             try:
                 betAmount = 5
                 # betAmount = int(input("How much do you want to bet? "))
-                print("Betting: " + str(betAmount))
+                # print("Betting: " + str(betAmount))
                 validBet = player.bet(betAmount, player.hands[0])
             except:
                 print("Invalid Bet. Please enter a number")
                 validBet = False
 
 def payout(player, hand, position):
-    print(player.bankroll)
+    # print(player.bankroll)
     if position == 'WIN':
         player.recievePayout(hand, 1)
     elif position == 'PUSH':
         player.recievePayout(hand, 0)
     elif position == 'BLACKJACK':
         player.recievePayout(hand, 1.5)
-    print(player.bankroll)
+    # print(player.bankroll)
     #else we have lost. The bet was already removed from the our bankroll
 
 '''
@@ -39,7 +39,7 @@ If the cutCard is dealt, this will be the last hand. Set isShuffleTime to true
 def hit(hand):
     card = cardShoe.pop()
     if(card.rank == 0):
-        print("----------------------CUT CARD----------------------")
+        # print("----------------------CUT CARD----------------------")
         global isShuffleTime
         isShuffleTime = True
         card = cardShoe.pop()
@@ -60,15 +60,15 @@ def deal(table):
                 hit(hand)
 
 def playHand(player):
+    global totalHands
     for hand in player.hands:
+        totalHands += 1
         if len(hand.cards) < 2:
-            print()
             hit(hand)
         hand.checkBlackjack()
-        print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+        # print(player, hand.getSoftScore(), hand.getHardScore(), hand)
         choice = ''
         while choice != 's' and hand.getSoftScore() != 21:
-            print()
             options = "[H]it or [S]tand"
             doubleDownEnabled = False
             splitEnabled = False
@@ -91,18 +91,18 @@ def playHand(player):
                 pass
             elif choice == 'h':
                 hit(hand)
-                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                # print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 if hand.getHardScore() >= 21:
                     choice = 's'
             elif choice == 'd' and doubleDownEnabled:
                 player.doubleDown(hand)
                 hit(hand)
-                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                # print(player, hand.getSoftScore(), hand.getHardScore(), hand)
                 choice = 's'
             elif choice == 't' and splitEnabled:
                 player.splitHand(hand)
                 hit(hand)
-                print(player, hand.getSoftScore(), hand.getHardScore(), hand)
+                # print(player, hand.getSoftScore(), hand.getHardScore(), hand)
             else:
                 print("Invalid Input")
 '''
@@ -139,8 +139,7 @@ Also give an easier readout for the print object
 '''
 def scoreTable(players, dealer):
     dealerScore = dealer.hands[0].getSoftScore()
-    print()
-    print("DEALER : ", dealerScore, dealer.hands[0])
+    # print("DEALER : ", dealerScore, dealer.hands[0])
     '''
     Check if the dealer has blackjack. If true, all players lose immediately
     UNLESS a player also has blackjack, then they PUSH.
@@ -154,7 +153,7 @@ def scoreTable(players, dealer):
                 else:
                     currHand = "LOSS"
                     player.losses += 1
-                print(player, currHand, hand)
+                # print(player, currHand, hand)
                 payout(player, hand, currHand)
     else:
         for player in players:
@@ -179,7 +178,7 @@ def scoreTable(players, dealer):
                 else:
                     currHand = "BUST"
                     player.losses += 1
-                print(player, currHand, handScore, hand)
+                # print(player, currHand, handScore, hand)
                 payout(player, hand, currHand)
 
 
@@ -209,27 +208,25 @@ After the dealer makes all their choices, score the table to determine winners
 Discard all the cards and get ready for the next hand
 
 '''
-totalHands = 0
+
 def playRound(table, players):
-    global totalHands
     betBeforeHand(players) #1
-    totalHands += 1
     deal(table) #2
     '''if the dealer has blackjack, the hand is over. No insurance (currently?)
     Move to scoring/payout
     '''
     if not dealer.hands[0].checkBlackjack(): #3
-        print("Dealer's up Card: " , dealerUpCard(dealer))
+        # print("Dealer's up Card: " , dealerUpCard(dealer))
         for player in players: #4
             playHand(player)
 
         if not deadHand(players):
             while dealer.hands[0].getSoftScore() < 17: #5 #dealer stays on soft 17
                 hit(dealer.hands[0])
-                print("DealerHand", dealer.hands[0])
+                # print("DealerHand", dealer.hands[0])
     scoreTable(players, dealer) #6 #7
     resetTable(table) #8
-    print("--------------------------------")
+    # print("--------------------------------")
 
 alldecisions = []
 def getModelPrediction(dealer, hand):
@@ -237,8 +234,9 @@ def getModelPrediction(dealer, hand):
     normalizedInputs =[inputs[0]/21, inputs[1]/21, inputs[2]/13, inputs[3]/13, int(inputs[4])/1.0, int(inputs[5])/1.0, inputs[6]/14]
     output = model.predict(np.expand_dims(normalizedInputs, axis=0))
     choice = choices[np.argmax(output)].lower()
-    print(inputs, choice)
-    alldecisions.append(inputs.append(choice))
+    # print(inputs, choice)
+    inputs.append(choice)
+    alldecisions.append(inputs)
     return choice
 '''
 Clear out the rest of the shoe. Reset isShuffleTime to False. This can be
@@ -247,8 +245,10 @@ used for continuous gaming or set a game count.
 Run the game. Put this in a for loop if you want to run the game
 X times in a row
 '''
+totalHands = 0
 def game(numSessions):
     for i in range(0, numSessions):
+        print("Game",i)
         cardShoe.clear()
         global isShuffleTime
         isShuffleTime = False
@@ -261,11 +261,17 @@ def game(numSessions):
 # text_trap = io.StringIO()
 # sys.stdout = text_trap
 
-game(20)
+game(10)
 # sys.stdout = sys.__stdout__
 
 print(player1.wins, "-", player1.losses, "-", player1.pushes, "/", totalHands )
 print("{:.3%}".format(player1.wins/totalHands), "-", "{:.3%}".format(player1.losses/totalHands), "-", "{:.3%}".format(player1.pushes/totalHands) )
+
+totalHands = totalHands - player1.pushes
+print("\nExcluding ties")
+print("{W:^9}-{L:^9}/{T:^9}".format(W="Wins", L="Loss",T="Total"))
+print("{W:^9}-{L:^9}/{T:^9}".format(W=player1.wins, L=player1.losses,T=totalHands))
+print("{Wins:.2%}-{Losses:.2%}".format(Wins=player1.wins/totalHands,Losses=player1.losses/totalHands))
 print("Good Games!")
 
 pickle_out = open("alldecisions.pickle", "wb")

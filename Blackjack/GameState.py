@@ -10,7 +10,7 @@ from HelperFunctions import *
 '''
 Player Objects. This table can hold a max of 5 players.
 '''
-player1 = Player("p1", 1000)
+player1 = Player("p1", 10000000)
 player2 = Player("p2")
 player3 = Player("p3")
 player4 = Player("p4")
