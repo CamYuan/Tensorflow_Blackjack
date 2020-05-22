@@ -3,9 +3,11 @@
     bet: int,
     cards: list,
     bust: boolean,
-    blackjack: boolean,
+    hasBlackjack: boolean,
+    canDoubleDown: boolean,
     canSplit: boolean,
-    alreadySplit: boolean
+    alreadySplit: boolean,
+    splitAces: boolean
 }
 '''
 class BlackjackHand:
@@ -19,7 +21,6 @@ class BlackjackHand:
         self.canSplit = False
         self.alreadySplit = False
         self.splitAces = False
-
 
     def __repr__(self):
         string = ""
@@ -62,6 +63,9 @@ class BlackjackHand:
     def getBet(self):
         return self.bet
 
+    '''
+
+    '''
     def splitHand(self):
         self.canSplit = False
         self.alreadySplit = True
@@ -92,7 +96,8 @@ class BlackjackHand:
         for card in self.cards:
             if card.rank > 10: hardScore += 10
             else: hardScore += card.rank
-        if hardScore > 21: self.bust = True
+        if hardScore > 21:
+            self.bust = True
         return hardScore
 
     '''
@@ -107,7 +112,8 @@ class BlackjackHand:
         if self.bust: return softScore
         for card in self.cards:
             if card.rank == 1:
-                if softScore > 11: return softScore
+                if softScore > 11:
+                    return softScore
                 else:
                     softScore += 10
                     return softScore

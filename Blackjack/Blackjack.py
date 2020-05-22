@@ -265,7 +265,7 @@ def game(numSessions):
 # text_trap = io.StringIO()
 # sys.stdout = text_trap
 
-game(10)
+game(500)
 # sys.stdout = sys.__stdout__
 
 print(player1.wins, "-", player1.losses, "-", player1.pushes, "/", totalHands )
@@ -278,6 +278,6 @@ print("{W:^9}-{L:^9}/{T:^9}".format(W=player1.wins, L=player1.losses,T=totalHand
 print("{Wins:.2%}-{Losses:.2%}".format(Wins=player1.wins/totalHands,Losses=player1.losses/totalHands))
 print("Good Games!")
 
-pickle_out = open("alldecisions.pickle", "wb")
+pickle_out = open("500_alldecisions.pickle", "wb")
 pickle.dump(alldecisions, pickle_out)
 pickle_out.close()
